@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+	
+	<head>
+		<title>GTA3 .set editor</title>
+		
+		<link type="text/css" rel="stylesheet" href="./css/style.css" media="all"/>
+		<script type="text/javascript" src="./js/jdataview.js"></script>
+		<script type="text/javascript" src="./js/jbinary.js"></script>
+		<script type="text/javascript" src="./js/FileSaver.js"></script>
+		<script type="text/javascript" src="./js/main.js"></script>
+		
+	</head>
+	<body>
+			
+		<div id="ID-LoadSave">
+			<p>
+				<input type="file" style="float:left;clear:none" id="ID-LoadFile" onchange="HandleFiles(this.files)">
+			</p>
+			<p>
+				<button id="ID-SaveFile" onclick="HandleDownload()">Save gta3.set</button>
+			</p>
+		</div>
+		
+		<p>
+			<label>gta3.set Version:<label>
+			<b><label id="ID-Version">none</label></b>
+		</p>
+		
+		<div id="ID-Mobile1_3_VersionStuffs" style="display:none;">
+		<br>
+			<fieldset>
+			<legend>Mobile Version Header:</legend>
+			<p>
+				<label for="ID-VersionString">VersionString<label>
+				<input id="ID-VersionString" type="text" maxLength="4"/>
+			</p>
+			<p>
+				<label for="ID-nVersionNumber">nVersionNumber<label>
+				<input id="ID-nVersionNumber" type="number" min="0" max="255" step="1"/>
+			</p>
+			</fieldset>
+		</br>
+		</div>
+		  
+		<div id="ID-PCSpecific" style="display:none;">
+		<br>			
+			<fieldset>
+			<legend>Base:</legend>
+			<p>
+				<a href="javascript:showhide('ID-bindsTable')">Click to show/hide Controls settings.</a>
+				<div id="ID-bindsTable" style="display:none;">
+					<p style="text-indent: 1em;">
+						<table style="width:100%">
+							<th>ID:</th>
+							<th>KEYBOARD</th>
+							<th>EXTRA</th>
+							<th>MOUSE</th>
+							<th>GAMEPAD</th>
+							
+							<tr>				
+								<td rowspan="2">0</td>
+								
+								<td><label for="ID-[0]_KB_KEY">key<label><input id="ID-[0]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[0]_EX_KEY">key<label><input id="ID-[0]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[0]_MS_KEY">key<label><input id="ID-[0]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[0]_PD_KEY">key<label><input id="ID-[0]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[0]_KB_ORD">set Order<label><input id="ID-[0]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[0]_EX_ORD">set Order<label><input id="ID-[0]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[0]_MS_ORD">set Order<label><input id="ID-[0]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[0]_PD_ORD">set Order<label><input id="ID-[0]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">1</td>
+								
+								<td><label for="ID-[1]_KB_KEY">key<label><input id="ID-[1]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[1]_EX_KEY">key<label><input id="ID-[1]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[1]_MS_KEY">key<label><input id="ID-[1]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[1]_PD_KEY">key<label><input id="ID-[1]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[1]_KB_ORD">set Order<label><input id="ID-[1]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[1]_EX_ORD">set Order<label><input id="ID-[1]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[1]_MS_ORD">set Order<label><input id="ID-[1]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[1]_PD_ORD">set Order<label><input id="ID-[1]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">2</td>
+								
+								<td><label for="ID-[2]_KB_KEY">key<label><input id="ID-[2]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[2]_EX_KEY">key<label><input id="ID-[2]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[2]_MS_KEY">key<label><input id="ID-[2]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[2]_PD_KEY">key<label><input id="ID-[2]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[2]_KB_ORD">set Order<label><input id="ID-[2]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[2]_EX_ORD">set Order<label><input id="ID-[2]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[2]_MS_ORD">set Order<label><input id="ID-[2]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[2]_PD_ORD">set Order<label><input id="ID-[2]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">3</td>
+								
+								<td><label for="ID-[3]_KB_KEY">key<label><input id="ID-[3]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[3]_EX_KEY">key<label><input id="ID-[3]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[3]_MS_KEY">key<label><input id="ID-[3]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[3]_PD_KEY">key<label><input id="ID-[3]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[3]_KB_ORD">set Order<label><input id="ID-[3]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[3]_EX_ORD">set Order<label><input id="ID-[3]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[3]_MS_ORD">set Order<label><input id="ID-[3]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[3]_PD_ORD">set Order<label><input id="ID-[3]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">4</td>
+								
+								<td><label for="ID-[4]_KB_KEY">key<label><input id="ID-[4]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[4]_EX_KEY">key<label><input id="ID-[4]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[4]_MS_KEY">key<label><input id="ID-[4]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[4]_PD_KEY">key<label><input id="ID-[4]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[4]_KB_ORD">set Order<label><input id="ID-[4]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[4]_EX_ORD">set Order<label><input id="ID-[4]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[4]_MS_ORD">set Order<label><input id="ID-[4]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[4]_PD_ORD">set Order<label><input id="ID-[4]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+										<tr>				
+								<td rowspan="2">5</td>
+								
+								<td><label for="ID-[5]_KB_KEY">key<label><input id="ID-[5]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[5]_EX_KEY">key<label><input id="ID-[5]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[5]_MS_KEY">key<label><input id="ID-[5]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[5]_PD_KEY">key<label><input id="ID-[5]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[5]_KB_ORD">set Order<label><input id="ID-[5]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[5]_EX_ORD">set Order<label><input id="ID-[5]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[5]_MS_ORD">set Order<label><input id="ID-[5]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[5]_PD_ORD">set Order<label><input id="ID-[5]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">6</td>
+								
+								<td><label for="ID-[6]_KB_KEY">key<label><input id="ID-[6]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[6]_EX_KEY">key<label><input id="ID-[6]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[6]_MS_KEY">key<label><input id="ID-[6]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[6]_PD_KEY">key<label><input id="ID-[6]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[6]_KB_ORD">set Order<label><input id="ID-[6]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[6]_EX_ORD">set Order<label><input id="ID-[6]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[6]_MS_ORD">set Order<label><input id="ID-[6]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[6]_PD_ORD">set Order<label><input id="ID-[6]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">7</td>
+								
+								<td><label for="ID-[7]_KB_KEY">key<label><input id="ID-[7]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[7]_EX_KEY">key<label><input id="ID-[7]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[7]_MS_KEY">key<label><input id="ID-[7]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[7]_PD_KEY">key<label><input id="ID-[7]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[7]_KB_ORD">set Order<label><input id="ID-[7]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[7]_EX_ORD">set Order<label><input id="ID-[7]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[7]_MS_ORD">set Order<label><input id="ID-[7]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[7]_PD_ORD">set Order<label><input id="ID-[7]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">8</td>
+								
+								<td><label for="ID-[8]_KB_KEY">key<label><input id="ID-[8]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[8]_EX_KEY">key<label><input id="ID-[8]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[8]_MS_KEY">key<label><input id="ID-[8]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[8]_PD_KEY">key<label><input id="ID-[8]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[8]_KB_ORD">set Order<label><input id="ID-[8]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[8]_EX_ORD">set Order<label><input id="ID-[8]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[8]_MS_ORD">set Order<label><input id="ID-[8]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[8]_PD_ORD">set Order<label><input id="ID-[8]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">9</td>
+								
+								<td><label for="ID-[9]_KB_KEY">key<label><input id="ID-[9]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[9]_EX_KEY">key<label><input id="ID-[9]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[9]_MS_KEY">key<label><input id="ID-[9]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[9]_PD_KEY">key<label><input id="ID-[9]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[9]_KB_ORD">set Order<label><input id="ID-[9]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[9]_EX_ORD">set Order<label><input id="ID-[9]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[9]_MS_ORD">set Order<label><input id="ID-[9]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[9]_PD_ORD">set Order<label><input id="ID-[9]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">10</td>
+								
+								<td><label for="ID-[10]_KB_KEY">key<label><input id="ID-[10]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[10]_EX_KEY">key<label><input id="ID-[10]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[10]_MS_KEY">key<label><input id="ID-[10]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[10]_PD_KEY">key<label><input id="ID-[10]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[10]_KB_ORD">set Order<label><input id="ID-[10]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[10]_EX_ORD">set Order<label><input id="ID-[10]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[10]_MS_ORD">set Order<label><input id="ID-[10]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[10]_PD_ORD">set Order<label><input id="ID-[10]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">11</td>
+								
+								<td><label for="ID-[11]_KB_KEY">key<label><input id="ID-[11]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[11]_EX_KEY">key<label><input id="ID-[11]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[11]_MS_KEY">key<label><input id="ID-[11]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[11]_PD_KEY">key<label><input id="ID-[11]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[11]_KB_ORD">set Order<label><input id="ID-[11]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[11]_EX_ORD">set Order<label><input id="ID-[11]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[11]_MS_ORD">set Order<label><input id="ID-[11]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[11]_PD_ORD">set Order<label><input id="ID-[11]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">12</td>
+								
+								<td><label for="ID-[12]_KB_KEY">key<label><input id="ID-[12]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[12]_EX_KEY">key<label><input id="ID-[12]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[12]_MS_KEY">key<label><input id="ID-[12]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[12]_PD_KEY">key<label><input id="ID-[12]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[12]_KB_ORD">set Order<label><input id="ID-[12]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[12]_EX_ORD">set Order<label><input id="ID-[12]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[12]_MS_ORD">set Order<label><input id="ID-[12]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[12]_PD_ORD">set Order<label><input id="ID-[12]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">13</td>
+								
+								<td><label for="ID-[13]_KB_KEY">key<label><input id="ID-[13]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[13]_EX_KEY">key<label><input id="ID-[13]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[13]_MS_KEY">key<label><input id="ID-[13]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[13]_PD_KEY">key<label><input id="ID-[13]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[13]_KB_ORD">set Order<label><input id="ID-[13]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[13]_EX_ORD">set Order<label><input id="ID-[13]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[13]_MS_ORD">set Order<label><input id="ID-[13]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[13]_PD_ORD">set Order<label><input id="ID-[13]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">14</td>
+								
+								<td><label for="ID-[14]_KB_KEY">key<label><input id="ID-[14]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[14]_EX_KEY">key<label><input id="ID-[14]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[14]_MS_KEY">key<label><input id="ID-[14]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[14]_PD_KEY">key<label><input id="ID-[14]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[14]_KB_ORD">set Order<label><input id="ID-[14]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[14]_EX_ORD">set Order<label><input id="ID-[14]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[14]_MS_ORD">set Order<label><input id="ID-[14]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[14]_PD_ORD">set Order<label><input id="ID-[14]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">15</td>
+								
+								<td><label for="ID-[15]_KB_KEY">key<label><input id="ID-[15]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[15]_EX_KEY">key<label><input id="ID-[15]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[15]_MS_KEY">key<label><input id="ID-[15]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[15]_PD_KEY">key<label><input id="ID-[15]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[15]_KB_ORD">set Order<label><input id="ID-[15]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[15]_EX_ORD">set Order<label><input id="ID-[15]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[15]_MS_ORD">set Order<label><input id="ID-[15]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[15]_PD_ORD">set Order<label><input id="ID-[15]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">16</td>
+								
+								<td><label for="ID-[16]_KB_KEY">key<label><input id="ID-[16]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[16]_EX_KEY">key<label><input id="ID-[16]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[16]_MS_KEY">key<label><input id="ID-[16]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[16]_PD_KEY">key<label><input id="ID-[16]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[16]_KB_ORD">set Order<label><input id="ID-[16]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[16]_EX_ORD">set Order<label><input id="ID-[16]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[16]_MS_ORD">set Order<label><input id="ID-[16]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[16]_PD_ORD">set Order<label><input id="ID-[16]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">17</td>
+								
+								<td><label for="ID-[17]_KB_KEY">key<label><input id="ID-[17]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[17]_EX_KEY">key<label><input id="ID-[17]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[17]_MS_KEY">key<label><input id="ID-[17]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[17]_PD_KEY">key<label><input id="ID-[17]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[17]_KB_ORD">set Order<label><input id="ID-[17]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[17]_EX_ORD">set Order<label><input id="ID-[17]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[17]_MS_ORD">set Order<label><input id="ID-[17]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[17]_PD_ORD">set Order<label><input id="ID-[17]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">18</td>
+								
+								<td><label for="ID-[18]_KB_KEY">key<label><input id="ID-[18]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[18]_EX_KEY">key<label><input id="ID-[18]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[18]_MS_KEY">key<label><input id="ID-[18]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[18]_PD_KEY">key<label><input id="ID-[18]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[18]_KB_ORD">set Order<label><input id="ID-[18]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[18]_EX_ORD">set Order<label><input id="ID-[18]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[18]_MS_ORD">set Order<label><input id="ID-[18]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[18]_PD_ORD">set Order<label><input id="ID-[18]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">19</td>
+								
+								<td><label for="ID-[19]_KB_KEY">key<label><input id="ID-[19]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[19]_EX_KEY">key<label><input id="ID-[19]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[19]_MS_KEY">key<label><input id="ID-[19]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[19]_PD_KEY">key<label><input id="ID-[19]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[19]_KB_ORD">set Order<label><input id="ID-[19]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[19]_EX_ORD">set Order<label><input id="ID-[19]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[19]_MS_ORD">set Order<label><input id="ID-[19]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[19]_PD_ORD">set Order<label><input id="ID-[19]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">20</td>
+								
+								<td><label for="ID-[20]_KB_KEY">key<label><input id="ID-[20]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[20]_EX_KEY">key<label><input id="ID-[20]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[20]_MS_KEY">key<label><input id="ID-[20]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[20]_PD_KEY">key<label><input id="ID-[20]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[20]_KB_ORD">set Order<label><input id="ID-[20]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[20]_EX_ORD">set Order<label><input id="ID-[20]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[20]_MS_ORD">set Order<label><input id="ID-[20]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[20]_PD_ORD">set Order<label><input id="ID-[20]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">21</td>
+								
+								<td><label for="ID-[21]_KB_KEY">key<label><input id="ID-[21]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[21]_EX_KEY">key<label><input id="ID-[21]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[21]_MS_KEY">key<label><input id="ID-[21]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[21]_PD_KEY">key<label><input id="ID-[21]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[21]_KB_ORD">set Order<label><input id="ID-[21]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[21]_EX_ORD">set Order<label><input id="ID-[21]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[21]_MS_ORD">set Order<label><input id="ID-[21]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[21]_PD_ORD">set Order<label><input id="ID-[21]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">22</td>
+								
+								<td><label for="ID-[22]_KB_KEY">key<label><input id="ID-[22]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[22]_EX_KEY">key<label><input id="ID-[22]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[22]_MS_KEY">key<label><input id="ID-[22]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[22]_PD_KEY">key<label><input id="ID-[22]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[22]_KB_ORD">set Order<label><input id="ID-[22]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[22]_EX_ORD">set Order<label><input id="ID-[22]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[22]_MS_ORD">set Order<label><input id="ID-[22]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[22]_PD_ORD">set Order<label><input id="ID-[22]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">23</td>
+								
+								<td><label for="ID-[23]_KB_KEY">key<label><input id="ID-[23]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[23]_EX_KEY">key<label><input id="ID-[23]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[23]_MS_KEY">key<label><input id="ID-[23]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[23]_PD_KEY">key<label><input id="ID-[23]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[23]_KB_ORD">set Order<label><input id="ID-[23]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[23]_EX_ORD">set Order<label><input id="ID-[23]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[23]_MS_ORD">set Order<label><input id="ID-[23]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[23]_PD_ORD">set Order<label><input id="ID-[23]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">24</td>
+								
+								<td><label for="ID-[24]_KB_KEY">key<label><input id="ID-[24]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[24]_EX_KEY">key<label><input id="ID-[24]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[24]_MS_KEY">key<label><input id="ID-[24]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[24]_PD_KEY">key<label><input id="ID-[24]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[24]_KB_ORD">set Order<label><input id="ID-[24]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[24]_EX_ORD">set Order<label><input id="ID-[24]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[24]_MS_ORD">set Order<label><input id="ID-[24]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[24]_PD_ORD">set Order<label><input id="ID-[24]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">25</td>
+								
+								<td><label for="ID-[25]_KB_KEY">key<label><input id="ID-[25]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[25]_EX_KEY">key<label><input id="ID-[25]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[25]_MS_KEY">key<label><input id="ID-[25]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[25]_PD_KEY">key<label><input id="ID-[25]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[25]_KB_ORD">set Order<label><input id="ID-[25]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[25]_EX_ORD">set Order<label><input id="ID-[25]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[25]_MS_ORD">set Order<label><input id="ID-[25]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[25]_PD_ORD">set Order<label><input id="ID-[25]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">26</td>
+								
+								<td><label for="ID-[26]_KB_KEY">key<label><input id="ID-[26]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[26]_EX_KEY">key<label><input id="ID-[26]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[26]_MS_KEY">key<label><input id="ID-[26]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[26]_PD_KEY">key<label><input id="ID-[26]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[26]_KB_ORD">set Order<label><input id="ID-[26]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[26]_EX_ORD">set Order<label><input id="ID-[26]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[26]_MS_ORD">set Order<label><input id="ID-[26]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[26]_PD_ORD">set Order<label><input id="ID-[26]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">27</td>
+								
+								<td><label for="ID-[27]_KB_KEY">key<label><input id="ID-[27]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[27]_EX_KEY">key<label><input id="ID-[27]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[27]_MS_KEY">key<label><input id="ID-[27]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[27]_PD_KEY">key<label><input id="ID-[27]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[27]_KB_ORD">set Order<label><input id="ID-[27]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[27]_EX_ORD">set Order<label><input id="ID-[27]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[27]_MS_ORD">set Order<label><input id="ID-[27]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[27]_PD_ORD">set Order<label><input id="ID-[27]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">28</td>
+								
+								<td><label for="ID-[28]_KB_KEY">key<label><input id="ID-[28]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[28]_EX_KEY">key<label><input id="ID-[28]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[28]_MS_KEY">key<label><input id="ID-[28]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[28]_PD_KEY">key<label><input id="ID-[28]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[28]_KB_ORD">set Order<label><input id="ID-[28]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[28]_EX_ORD">set Order<label><input id="ID-[28]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[28]_MS_ORD">set Order<label><input id="ID-[28]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[28]_PD_ORD">set Order<label><input id="ID-[28]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">29</td>
+								
+								<td><label for="ID-[29]_KB_KEY">key<label><input id="ID-[29]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[29]_EX_KEY">key<label><input id="ID-[29]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[29]_MS_KEY">key<label><input id="ID-[29]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[29]_PD_KEY">key<label><input id="ID-[29]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[29]_KB_ORD">set Order<label><input id="ID-[29]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[29]_EX_ORD">set Order<label><input id="ID-[29]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[29]_MS_ORD">set Order<label><input id="ID-[29]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[29]_PD_ORD">set Order<label><input id="ID-[29]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">30</td>
+								
+								<td><label for="ID-[30]_KB_KEY">key<label><input id="ID-[30]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[30]_EX_KEY">key<label><input id="ID-[30]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[30]_MS_KEY">key<label><input id="ID-[30]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[30]_PD_KEY">key<label><input id="ID-[30]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[30]_KB_ORD">set Order<label><input id="ID-[30]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[30]_EX_ORD">set Order<label><input id="ID-[30]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[30]_MS_ORD">set Order<label><input id="ID-[30]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[30]_PD_ORD">set Order<label><input id="ID-[30]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">31</td>
+								
+								<td><label for="ID-[31]_KB_KEY">key<label><input id="ID-[31]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[31]_EX_KEY">key<label><input id="ID-[31]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[31]_MS_KEY">key<label><input id="ID-[31]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[31]_PD_KEY">key<label><input id="ID-[31]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[31]_KB_ORD">set Order<label><input id="ID-[31]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[31]_EX_ORD">set Order<label><input id="ID-[31]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[31]_MS_ORD">set Order<label><input id="ID-[31]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[31]_PD_ORD">set Order<label><input id="ID-[31]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">32</td>
+								
+								<td><label for="ID-[32]_KB_KEY">key<label><input id="ID-[32]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[32]_EX_KEY">key<label><input id="ID-[32]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[32]_MS_KEY">key<label><input id="ID-[32]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[32]_PD_KEY">key<label><input id="ID-[32]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[32]_KB_ORD">set Order<label><input id="ID-[32]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[32]_EX_ORD">set Order<label><input id="ID-[32]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[32]_MS_ORD">set Order<label><input id="ID-[32]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[32]_PD_ORD">set Order<label><input id="ID-[32]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">33</td>
+								
+								<td><label for="ID-[33]_KB_KEY">key<label><input id="ID-[33]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[33]_EX_KEY">key<label><input id="ID-[33]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[33]_MS_KEY">key<label><input id="ID-[33]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[33]_PD_KEY">key<label><input id="ID-[33]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[33]_KB_ORD">set Order<label><input id="ID-[33]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[33]_EX_ORD">set Order<label><input id="ID-[33]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[33]_MS_ORD">set Order<label><input id="ID-[33]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[33]_PD_ORD">set Order<label><input id="ID-[33]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">34</td>
+								
+								<td><label for="ID-[34]_KB_KEY">key<label><input id="ID-[34]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[34]_EX_KEY">key<label><input id="ID-[34]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[34]_MS_KEY">key<label><input id="ID-[34]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[34]_PD_KEY">key<label><input id="ID-[34]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[34]_KB_ORD">set Order<label><input id="ID-[34]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[34]_EX_ORD">set Order<label><input id="ID-[34]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[34]_MS_ORD">set Order<label><input id="ID-[34]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[34]_PD_ORD">set Order<label><input id="ID-[34]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">35</td>
+								
+								<td><label for="ID-[35]_KB_KEY">key<label><input id="ID-[35]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[35]_EX_KEY">key<label><input id="ID-[35]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[35]_MS_KEY">key<label><input id="ID-[35]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[35]_PD_KEY">key<label><input id="ID-[35]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[35]_KB_ORD">set Order<label><input id="ID-[35]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[35]_EX_ORD">set Order<label><input id="ID-[35]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[35]_MS_ORD">set Order<label><input id="ID-[35]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[35]_PD_ORD">set Order<label><input id="ID-[35]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">36</td>
+								
+								<td><label for="ID-[36]_KB_KEY">key<label><input id="ID-[36]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[36]_EX_KEY">key<label><input id="ID-[36]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[36]_MS_KEY">key<label><input id="ID-[36]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[36]_PD_KEY">key<label><input id="ID-[36]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[36]_KB_ORD">set Order<label><input id="ID-[36]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[36]_EX_ORD">set Order<label><input id="ID-[36]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[36]_MS_ORD">set Order<label><input id="ID-[36]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[36]_PD_ORD">set Order<label><input id="ID-[36]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">37</td>
+								
+								<td><label for="ID-[37]_KB_KEY">key<label><input id="ID-[37]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[37]_EX_KEY">key<label><input id="ID-[37]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[37]_MS_KEY">key<label><input id="ID-[37]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[37]_PD_KEY">key<label><input id="ID-[37]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[37]_KB_ORD">set Order<label><input id="ID-[37]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[37]_EX_ORD">set Order<label><input id="ID-[37]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[37]_MS_ORD">set Order<label><input id="ID-[37]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[37]_PD_ORD">set Order<label><input id="ID-[37]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">38</td>
+								
+								<td><label for="ID-[38]_KB_KEY">key<label><input id="ID-[38]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[38]_EX_KEY">key<label><input id="ID-[38]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[38]_MS_KEY">key<label><input id="ID-[38]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[38]_PD_KEY">key<label><input id="ID-[38]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[38]_KB_ORD">set Order<label><input id="ID-[38]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[38]_EX_ORD">set Order<label><input id="ID-[38]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[38]_MS_ORD">set Order<label><input id="ID-[38]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[38]_PD_ORD">set Order<label><input id="ID-[38]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">39</td>
+								
+								<td><label for="ID-[39]_KB_KEY">key<label><input id="ID-[39]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[39]_EX_KEY">key<label><input id="ID-[39]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[39]_MS_KEY">key<label><input id="ID-[39]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[39]_PD_KEY">key<label><input id="ID-[39]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[39]_KB_ORD">set Order<label><input id="ID-[39]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[39]_EX_ORD">set Order<label><input id="ID-[39]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[39]_MS_ORD">set Order<label><input id="ID-[39]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[39]_PD_ORD">set Order<label><input id="ID-[39]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td rowspan="2">40</td>
+								
+								<td><label for="ID-[40]_KB_KEY">key<label><input id="ID-[40]_KB_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[40]_EX_KEY">key<label><input id="ID-[40]_EX_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[40]_MS_KEY">key<label><input id="ID-[40]_MS_KEY" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[40]_PD_KEY">key<label><input id="ID-[40]_PD_KEY" type="number" min="0" step="1"/></td>
+							</tr>
+							<tr>				
+								<td><label for="ID-[40]_KB_ORD">set Order<label><input id="ID-[40]_KB_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[40]_EX_ORD">set Order<label><input id="ID-[40]_EX_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[40]_MS_ORD">set Order<label><input id="ID-[40]_MS_ORD" type="number" min="0" step="1"/></td>
+								<td><label for="ID-[40]_PD_ORD">set Order<label><input id="ID-[40]_PD_ORD" type="number" min="0" step="1"/></td>
+							</tr>
+						</table>
+					</p>
+				</div>
+			</p>
+			<p>
+				<label for="ID-RubbishString1">RubbishString1<label>
+				<input id="ID-RubbishString1" type="text" maxLength="20"/>
+			</p>
+			<p>
+				<label for="ID-RubbishString2">RubbishString2<label>
+				<input id="ID-RubbishString2" type="text" maxLength="20"/>
+			</p>
+			<p>
+				<label for="ID-RubbishString3">RubbishString3<label>
+				<input id="ID-RubbishString3" type="text" maxLength="4"/>
+			</p>
+			<p>
+				<label for="ID-RubbishString4">RubbishString4<label>
+				<input id="ID-RubbishString4" type="text" maxLength="4"/>
+			</p>
+			<p>
+				<label for="ID-RubbishString5">RubbishString5<label>
+				<input id="ID-RubbishString5" type="text" maxLength="1"/>
+			</p>
+			<p>
+				<label for="ID-RubbishString6">RubbishString6<label>
+				<input id="ID-RubbishString6" type="text" maxLength="1"/>
+			</p>
+			<p>
+				<label for="ID-RubbishString7">RubbishString7<label>
+				<input id="ID-RubbishString7" type="text" maxLength="1"/>
+			</p>
+			<p>
+				<label for="ID-bHeadBob">bHeadBob<label>
+				<input id="ID-bHeadBob" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-fMouseAccelHorzntl">fMouseAccelHorzntl<label>
+				<input id="ID-fMouseAccelHorzntl" type="number" min="0" step="0.01"/>
+			</p>
+			<p>
+				<label for="ID-fMouseAccelVertical">fMouseAccelVertical<label>
+				<input id="ID-fMouseAccelVertical" type="number" min="0" step="0.01"/>
+			</p>
+			<p>
+				<label for="ID-bInvertVertically">bInvertVertically<label>
+				<input id="ID-bInvertVertically" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-bDisableMouseSteering">bDisableMouseSteering<label>
+				<input id="ID-bDisableMouseSteering" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-nSfxVolume">nSfxVolume<label>
+				<input id="ID-nSfxVolume" type="range" min="0" max="128" step="1"/>
+			</p>
+			<p>
+				<label for="ID-nMusicVolume">nMusicVolume<label>
+				<input id="ID-nMusicVolume" type="range" min="0" max="128" step="1"/>
+			</p>
+			<p>
+				<label for="ID-nRadioStation">nRadioStation<label>
+				<select id="ID-nRadioStation">
+					<option value="0">HEAD RADIO</option>
+					<option value="1">DOUBLE CLEFF FM</option>
+					<option value="2">JAH RADIO</option>
+					<option value="3">RISE FM</option>
+					<option value="4">LIPS</option>
+					<option value="5">GAME FM</option>
+					<option value="6">MSX FM</option>
+					<option value="7">FLASHBACK</option>
+					<option value="8">CHATTERBOX </option>
+					<option value="9">MP3 PLAYER (PC Only)</option>
+				</select>
+			</p>
+			<p>
+				<label for="ID-nSpeakers">nSpeakers<label>
+				<select id="ID-nSpeakers">
+					<option value="0">2 SPEAKERS</option>
+					<option value="1">HEADPHONES</option>
+					<option value="2">MORE THAN 2 SPEAKERS</option>
+				</select>
+			</p>
+			<p>
+				<label for="ID-nAudio3DProviderIndex">nAudioProviderIndex<label>
+				<input id="ID-nAudio3DProviderIndex" type="number" min="0" max="63" step="1"/>
+			</p>
+			<p>
+				<label for="ID-bDMA">bDMA<label>
+				<input id="ID-bDMA" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-nBrightness">nBrightness<label>
+				<input id="ID-nBrightness" type="number" min="0" max="512" step="1"/>
+			</p>
+			<p>
+				<label for="ID-fLOD">fLOD<label>
+				<input id="ID-fLOD" type="number" min="0" step="0.01"/>
+			</p>
+			<p>
+				<label for="ID-bShowSubtitles">bShowSubtitles<label>
+				<input id="ID-bShowSubtitles" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-bUseWideScreen">bUseWideScreen<label>
+				<input id="ID-bUseWideScreen" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-bVsyncDisp">bVsyncDisp<label>
+				<input id="ID-bVsyncDisp" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-bFrameLimiter">bFrameLimiter<label>
+				<input id="ID-bFrameLimiter" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-nVideoMode">nVideoMode<label>
+				<input id="ID-nVideoMode" type="number" min="0" max="255" step="1"/>
+			</p>
+			<p>
+				<label for="ID-bBlurOn">bBlurOn<label>
+				<input id="ID-bBlurOn" type="checkbox"/>
+			</p>
+			<p>
+				<label for="ID-PrefsSkinFile">PrefsSkinFile<label>
+				<input id="ID-PrefsSkinFile" type="text" maxLength="256"/>
+			</p>
+			<p>
+				<label for="ID-nControlMethod">nControlMethod<label>
+				<select id="ID-nControlMethod">
+					<option value="0">STANDARD</option>
+					<option value="1">CLASSIC</option>
+				</select>
+			</p>
+			<p>
+				<label for="ID-nPrefsLanguage">nLanguage<label>
+				<select id="ID-nPrefsLanguage">
+					<option value="0">ENGLISH</option>
+					<option value="1">FRENCH</option>
+					<option value="2">GERMAN</option>
+					<option value="3">ITALIAN</option>
+					<option value="4">SPANISH</option>
+					<option value="5">?</option>
+					<option value="6">JAPANESE (mobile only)</option>
+					<option value="7">KOREAN (mobile 1.4+ only)</option>
+				</select>
+			</p>
+			</fieldset>
+		</br>
+		</div>
+		
+		<div id="ID-MobileSpecific" style="display:none;">
+		<br>
+			<fieldset>
+			<legend>Mobile:</legend>
+				<p>
+					<label for="ID-fMobileResolution">fMobileResolution<label>
+					<input id="ID-fMobileResolution" type="range" min="0.0" max="1.0" step="0.1"/>
+				</p>
+				<p>
+					<label for="ID-bDynamicShadows">bDynamicShadows<label>
+					<input id="ID-bDynamicShadows" type="checkbox"/>
+				</p>
+				<p>
+					<label for="ID-bUseAccelerometer">bUseAccelerometer<label>
+					<input id="ID-bUseAccelerometer" type="checkbox"/>
+				</p>
+				<p>
+					<label for="ID-bDriveWithAnalog">bDriveWithAnalog<label>
+					<input id="ID-bDriveWithAnalog" type="checkbox"/>
+				</p>
+				<p>
+					<label for="ID-bLeftHanded">bLeftHanded<label>
+					<input id="ID-bLeftHanded" type="checkbox"/>
+				</p>
+				<p>
+					<label for="ID-nMobileEffects">nMobileEffects<label>
+					<input id="ID-nMobileEffects" type="range" min="0" max="3" step="1"/>
+				</p>
+				<!-- 1.3 -->
+				<div id="ID-Haptics1_3" style="display:none;">
+				<p>
+					<label for="ID-bHaptics">bHaptics<label>
+					<input id="ID-bHaptics" type="checkbox"/>
+				</p>
+				</div>
+				<!-- 1.6 -->
+				<div id="ID-GameStartedCounter1_6" style="display:none;">
+				<p>
+					<label for="ID-nGameStartedCounter">nGameStartedCounter<label>
+					<input id="ID-nGameStartedCounter" type="number" min="0" step="1"/>
+				</p>
+				</div>
+				
+				<p>
+					<a href="javascript:showhide('ID-MobileButtonsTable')">Click to show/hide Mobile Buttons settings.</a>
+					<div id="ID-MobileButtonsTable" style="display:none;">
+						<p style="text-indent: 1em;">
+							<p>
+								<label for="ID-TouchscreenSignature">Signature<label>
+								<input id="ID-TouchscreenSignature" type="number" min="0" max="255" step="1"/>
+							</p>
+				
+							<table style="width:100%">
+								<th>ID:</th>
+								<th>x</th>
+								<th>y</th>
+								<th>Width</th>
+								<th>Height</th>
+								<tr>
+									<td>0</td>
+									<td><input id="ID-[0]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[0]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[0]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[0]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td><input id="ID-[1]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[1]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[1]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[1]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td><input id="ID-[2]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[2]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[2]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[2]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>3</td>
+									<td><input id="ID-[3]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[3]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[3]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[3]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>4</td>
+									<td><input id="ID-[4]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[4]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[4]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[4]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>5</td>
+									<td><input id="ID-[5]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[5]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[5]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[5]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>6</td>
+									<td><input id="ID-[6]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[6]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[6]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[6]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>7</td>
+									<td><input id="ID-[7]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[7]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[7]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[7]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>8</td>
+									<td><input id="ID-[8]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[8]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[8]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[8]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>9</td>
+									<td><input id="ID-[9]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[9]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[9]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[9]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>10</td>
+									<td><input id="ID-[10]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[10]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[10]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[10]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>11</td>
+									<td><input id="ID-[11]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[11]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[11]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[11]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>12</td>
+									<td><input id="ID-[12]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[12]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[12]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[12]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>13</td>
+									<td><input id="ID-[13]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[13]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[13]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[13]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>14</td>
+									<td><input id="ID-[14]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[14]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[14]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[14]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>15</td>
+									<td><input id="ID-[15]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[15]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[15]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[15]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>16</td>
+									<td><input id="ID-[16]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[16]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[16]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[16]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>17</td>
+									<td><input id="ID-[17]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[17]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[17]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[17]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>18</td>
+									<td><input id="ID-[18]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[18]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[18]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[18]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>19</td>
+									<td><input id="ID-[19]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[19]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[19]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[19]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>20</td>
+									<td><input id="ID-[20]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[20]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[20]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[20]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>21</td>
+									<td><input id="ID-[21]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[21]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[21]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[21]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>22</td>
+									<td><input id="ID-[22]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[22]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[22]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[22]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>23</td>
+									<td><input id="ID-[23]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[23]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[23]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[23]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>24</td>
+									<td><input id="ID-[24]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[24]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[24]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[24]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>25</td>
+									<td><input id="ID-[25]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[25]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[25]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[25]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>26</td>
+									<td><input id="ID-[26]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[26]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[26]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[26]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>27</td>
+									<td><input id="ID-[27]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[27]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[27]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[27]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>28</td>
+									<td><input id="ID-[28]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[28]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[28]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[28]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>29</td>
+									<td><input id="ID-[29]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[29]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[29]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[29]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>30</td>
+									<td><input id="ID-[30]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[30]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[30]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[30]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>
+								<tr>
+									<td>31</td>
+									<td><input id="ID-[31]_TP_X" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[31]_TP_Y" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[31]_TP_W" type="number" min="0.0" step="0.1"/></td>
+									<td><input id="ID-[31]_TP_H" type="number" min="0.0" step="0.1"/></td>
+								</tr>		
+							</table>
+						</p>
+					</div>
+				</p>
+			</fieldset>
+		</br>
+		</div>
+	</body>
+</html>
