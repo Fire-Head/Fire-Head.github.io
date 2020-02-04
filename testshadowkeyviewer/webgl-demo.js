@@ -118,7 +118,7 @@ MapViewer.prototype.init = function() {
 
 	
 	this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .01, 1000)
-	this.camera.position.set( 0, 0, 5 );
+	this.camera.position.set( 0.075, 2.075, 4.55 );
 
 
 	this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -313,6 +313,7 @@ MapViewer.prototype.addMdl = function(mdl)
 	this.mesh.position.x = 0;
 	this.mesh.position.y = 0;
 	this.mesh.position.z = 0;
+	this.mesh.rotateY( Math.PI );
 	
     this.scene.add(this.mesh);
 };
