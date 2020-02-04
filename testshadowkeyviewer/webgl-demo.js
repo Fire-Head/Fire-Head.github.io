@@ -159,7 +159,14 @@ MapViewer.prototype.init = function() {
 };
 
 MapViewer.prototype.setupModelsGUI = function(modeldefs)
-{	
+{
+	modeldefs.sort(function(a, b)
+	{
+		if(a.NAME.toLowerCase() < b.NAME.toLowerCase()) { return -1; }
+		if(a.NAME.toLowerCase() > b.NAME.toLowerCase()) { return 1; }
+		return 0;
+	})
+
 	var folder = this.gui.addFolder( "models" );
 
 	var generateCallback = function ( index )
@@ -240,7 +247,10 @@ function GetTexture(data, width, height)
 					imageData.data[ i + 0 ] = b;
 					imageData.data[ i + 1 ] = g;			
 					imageData.data[ i + 2 ] = r;
-					imageData.data[ i + 3 ] = 255;
+					if (pixel == 0xF0F)
+						imageData.data[ i + 3 ] = 0;
+					else
+						imageData.data[ i + 3 ] = 255;
 				}
 			}
 		}
@@ -305,7 +315,7 @@ MapViewer.prototype.addMdl = function(mdl)
 	if (mdl.numTextures > 0)
 	{
 		var mp = GetTexture( mdl.textures[0], mdl.width, mdl.height );
-		material = new THREE.MeshLambertMaterial( { map: mp } );
+		material = new THREE.MeshLambertMaterial( { map: mp, transparent: true } );
 	}
 	else
 	{
