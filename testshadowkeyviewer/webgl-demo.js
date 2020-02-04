@@ -314,6 +314,7 @@ MapViewer.prototype.addMdl = function(mdl)
 	this.mesh.position.y = 0;
 	this.mesh.position.z = 0;
 	this.mesh.rotateY( Math.PI );
+	this.mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
 	
     this.scene.add(this.mesh);
 };
