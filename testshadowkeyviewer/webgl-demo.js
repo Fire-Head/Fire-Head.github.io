@@ -61,7 +61,7 @@ var tModel =
 		width : 'int16',
 		height : 'int16',
 		
-		textures: ['array', ['array', ['array', 'uint16', 'height'], 'width'], 'numTextures'],
+		textures: ['array', ['array', ['array', 'uint16', 'width'], 'height'], 'numTextures'],
 	}
 };
 
@@ -301,9 +301,17 @@ MapViewer.prototype.addMdl = function(mdl)
     this.geo.computeVertexNormals();
     this.geo.computeFaceNormals();
     
-	var mp = GetTexture( mdl.textures[0], mdl.width, mdl.height );
+	var material = null;
+	if (mdl.numTextures > 0)
+	{
+		var mp = GetTexture( mdl.textures[0], mdl.width, mdl.height );
+		material = new THREE.MeshLambertMaterial( { map: mp } );
+	}
+	else
+	{
+		material = new THREE.MeshLambertMaterial( {  } );
+	}
 	
-    var material = new THREE.MeshLambertMaterial( { map: mp } );
 
 	if (this.mesh)
 		this.scene.remove(this.mesh);
