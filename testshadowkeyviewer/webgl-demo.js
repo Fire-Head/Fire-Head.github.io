@@ -1,3 +1,15 @@
+dat.GUI.prototype.removeFolder = function(name)
+{
+  var folder = this.__folders[name];
+  if (!folder) {
+    return;
+  }
+  folder.close();
+  this.__ul.removeChild(folder.domElement.parentNode);
+  delete this.__folders[name];
+  this.onResize();
+}
+
 var tIdx =
 {
 	'jBinary.all': 'File',
@@ -67,14 +79,15 @@ var tModel =
 
 var modelsinfo = null;
 
-function LoadData(mid)
+function LoadData(mid, skin)
 {
 	jBinary.load('tes/models.huge', tModel).then(function(jb)
 	{
 		if ( modelsinfo.Files[mid].size != 0 )
 		{
 			var model = jb.seek(modelsinfo.Files[mid].pos, function() { return jb.read('File');});
-			window.viewer.addMdl(model);
+			window.viewer.curmodel = model;
+			window.viewer.addMdl(model, skin);
 		}
     });
 	
@@ -115,6 +128,7 @@ MapViewer.prototype.init = function() {
 	};
 	
 	this.gui = new dat.GUI();
+	this.gui2 = new dat.GUI();
 
 	
 	this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .01, 1000)
@@ -155,7 +169,7 @@ MapViewer.prototype.init = function() {
 	
 	window.addEventListener('resize', this.resize, false)
 	
-	
+	this.curmodel = null;
 };
 
 MapViewer.prototype.setupModelsGUI = function(modeldefs)
@@ -173,7 +187,7 @@ MapViewer.prototype.setupModelsGUI = function(modeldefs)
 	{
 		return function ()
 		{
-			LoadData( index );
+			LoadData( index, 0 );
 		};
 	};
 
@@ -264,7 +278,7 @@ function GetTexture(data, width, height)
 	return texture;
 }
 
-MapViewer.prototype.addMdl = function(mdl)
+MapViewer.prototype.addMdl = function(mdl, skinidx)
 {	
     var c = (255 << 16) + (0 << 8) + 255;
 	this.geo = null;
@@ -312,9 +326,9 @@ MapViewer.prototype.addMdl = function(mdl)
     this.geo.computeFaceNormals();
     
 	var material = null;
-	if (mdl.numTextures > 0)
+	if (mdl.numTextures > 0 && skinidx < mdl.numTextures)
 	{
-		var mp = GetTexture( mdl.textures[0], mdl.width, mdl.height );
+		var mp = GetTexture( mdl.textures[skinidx], mdl.width, mdl.height );
 		mp.encoding = THREE.sRGBEncoding;
 		material = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
 	}
@@ -328,14 +342,40 @@ MapViewer.prototype.addMdl = function(mdl)
 		this.scene.remove(this.mesh);
 	this.mesh = null;
 	
-    this.mesh = new THREE.Mesh(this.geo, material);
+    	this.mesh = new THREE.Mesh(this.geo, material);
 	this.mesh.position.x = 0;
 	this.mesh.position.y = 0;
 	this.mesh.position.z = 0;
 	this.mesh.rotateY( Math.PI );
 	this.mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
 	
-    this.scene.add(this.mesh);
+   	this.scene.add(this.mesh);
+	
+	this.gui2.removeFolder("skins");
+
+	if (mdl.numTextures > 1)
+	{
+		var folder2 = this.gui2.addFolder( "skins" );
+		
+
+		var generateCallback = function ( index )
+		{
+			return function ()
+			{
+				window.viewer.addMdl(window.viewer.curmodel, index);
+			};
+		};
+	
+		for ( var i = 0; i < mdl.numTextures; i++ )
+		{
+			var name = i.toString();
+	
+			this.skinConfig[ name ] = generateCallback( i );
+			folder2.add( this.skinConfig, name ).name( name );
+		}
+		
+		folder2.open();
+	}
 };
 
 MapViewer.prototype.updateGeo = function(delta) {
@@ -386,7 +426,7 @@ function main() {
 		});
     });
 	
-	LoadData(58);
+	LoadData(58, 0);
 	
 	console.log('loaded');
 }
