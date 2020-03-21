@@ -315,11 +315,12 @@ MapViewer.prototype.addMdl = function(mdl)
 	if (mdl.numTextures > 0)
 	{
 		var mp = GetTexture( mdl.textures[0], mdl.width, mdl.height );
-		material = new THREE.MeshLambertMaterial( { map: mp, transparent: true } );
+		mp.encoding = THREE.sRGBEncoding;
+		material = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
 	}
 	else
 	{
-		material = new THREE.MeshLambertMaterial( {  } );
+		material = new THREE.MeshBasicMaterial( {  } );
 	}
 	
 
