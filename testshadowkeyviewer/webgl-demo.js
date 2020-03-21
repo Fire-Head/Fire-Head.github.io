@@ -1,13 +1,13 @@
 dat.GUI.prototype.removeFolder = function(name)
 {
-  var folder = this.__folders[name];
-  if (!folder) {
-    return;
-  }
-  folder.close();
-  this.__ul.removeChild(folder.domElement.parentNode);
-  delete this.__folders[name];
-  this.onResize();
+	var folder = this.__folders[name];
+	if (!folder)
+		return;
+	
+	folder.close();
+	this.__ul.removeChild(folder.domElement.parentNode);
+	delete this.__folders[name];
+	this.onResize();
 }
 
 var tIdx =
@@ -21,7 +21,7 @@ var tIdx =
 		size: 'uint32'
 	},
 	
-	File: {  
+	File: {	 
 		Num: 'uint32',
 		Files: ['array', 'FastFileDesc', 'Num'],
 	}
@@ -55,15 +55,23 @@ var tModel =
 		tb : 'int16',
 		tc : 'int16',
 	},
+	
+	Anim:
+	{
+		startFrame : 'int16',
+		endFrame   : 'int16',
+		speed      : 'int16',
+	},
 
-	File: {
+	File:
+	{
 		headerSize : 'int16',
 		numFrames  : 'int16',
 		numVerts  : 'int16',
-		numUVs  : 'int16',
-		numIndexes  : 'int16',
-		sizeOfVertsData  : 'int16',
-		w6  : 'int16',
+		numUVs	: 'int16',
+		numIndexes	: 'int16',
+		sizeOfVertsData	 : 'int16',
+		w6	: 'int16',
 				
 		vertices: ['array', ['array', 'Vector3D', 'numVerts'], 'numFrames'],
 		texCoords: ['array', 'UV', 'numUVs'],
@@ -74,12 +82,15 @@ var tModel =
 		height : 'int16',
 		
 		textures: ['array', ['array', ['array', 'uint16', 'width'], 'height'], 'numTextures'],
+		
+		numAnims : 'int16',
+		anims: ['array', 'Anim', 'numAnims'],
 	}
 };
 
 var modelsinfo = null;
 
-function LoadData(mid, skin)
+function LoadData(mid)
 {
 	jBinary.load('tes/models.huge', tModel).then(function(jb)
 	{
@@ -87,94 +98,75 @@ function LoadData(mid, skin)
 		{
 			var model = jb.seek(modelsinfo.Files[mid].pos, function() { return jb.read('File');});
 			window.viewer.curmodel = model;
-			window.viewer.addMdl(model, skin);
+			window.viewer.addMdl(model);
 		}
-    });
+	});
 	
 }
- 
-var scene, camera, renderer;
-var light, controls;
 
-var geometry;
-
-var MapViewer = function() {
-    this.init();
-    this.animate();
+var MapViewer = function()
+{
+	this.init();
+	this.animate();
 };
 
-MapViewer.prototype.init = function() {
-
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+MapViewer.prototype.init = function()
+{
+	this.clock = new THREE.Clock();
+	
+	this.renderer = new THREE.WebGLRenderer({ antialias: true });
 	this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setClearColor( 0x000000 );
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
-    
+	this.renderer.setClearColor( 0x000000 );
+	this.renderer.setSize( window.innerWidth, window.innerHeight );
+	this.renderer.outputEncoding = THREE.sRGBEncoding;
+	
 	this.container = document.createElement( 'div' );
 	document.body.appendChild( this.container );			
 	
 	this.container.appendChild( this.renderer.domElement );
-	
-	this.renderer.outputEncoding = THREE.sRGBEncoding;
-	this.renderer.shadowMap.enabled = true;
-	this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-	this.stats = new Stats();
-	this.container.appendChild( this.stats.dom );
-	
-	this.playbackConfig =
-	{
-		
-	};
-	
-	this.skinConfig =
-	{
-		
-	};
-	
-	this.gui = new dat.GUI();
-	this.gui2 = new dat.GUI();
-
-	
 	this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .01, 1000)
 	this.camera.position.set( 0.075, 2.075, 4.55 );
 
-
 	this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-	
-				
 	this.controls.enableDamping = true
 	this.controls.dampingFactor = 0.2
 	this.controls.zoomSpeed = 1.4
 	this.controls.rotateSpeed = 0.6
 	this.controls.enableKeys = false
 
-    this.scene = new THREE.Scene();
+	this.scene = new THREE.Scene();
+	this.grid = new THREE.GridHelper( 50, 50, 0xffffff, 0x555555 );
+	this.scene.add( this.grid );
 	
-	var grid = new THREE.GridHelper( 50, 50, 0xffffff, 0x555555 );
-	this.scene.add( grid );
-				
 	this.geo = null;
 	this.mesh = null;
+	this.curmodel = null;
+
+	this.resetAnim();
 	
-    
-    var light = new THREE.AmbientLight( 0x888888 );
-    light.position.set( 1, 1, 1 );
-    this.scene.add( light );
-
-    var light1 = new THREE.DirectionalLight(0xffffff, 0.3);
-    light1.position.set(-1, -2, 3).normalize();
-    this.scene.add(light1);
-
-    var light2 = new THREE.DirectionalLight(0xffffff, 0.3);
-    light2.position.set(1, 2, 3).normalize();
-    this.scene.add(light2);
-
-	this.clock = new THREE.Clock();
+	this.stats = new Stats();
+	this.container.appendChild( this.stats.dom );
+	
+	this.playbackConfig = {  };
+	this.skinConfig = { Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, };
+	
+	this.gui = new dat.GUI();
+	this.gui2 = new dat.GUI();
+	
+	this.gui2.add( this.skinConfig, 'Grid', true ).onChange( function ()
+	{
+		if (window.viewer.skinConfig.Grid)
+			window.viewer.scene.add( window.viewer.grid );
+		else
+			window.viewer.scene.remove( window.viewer.grid );
+	} );
+	
+	this.gui2.add( this.skinConfig, 'Animate', true );
+	this.gui2.add( this.skinConfig, 'CycleAnim', true );
+	this.gui2.add( this.skinConfig, 'AnimSpeed', 0, 10 )
 	
 	window.addEventListener('resize', this.resize, false)
-	
-	this.curmodel = null;
 };
 
 MapViewer.prototype.setupModelsGUI = function(modeldefs)
@@ -192,7 +184,7 @@ MapViewer.prototype.setupModelsGUI = function(modeldefs)
 	{
 		return function ()
 		{
-			LoadData( index, 0 );
+			LoadData( index );
 		};
 	};
 
@@ -209,21 +201,24 @@ MapViewer.prototype.setupModelsGUI = function(modeldefs)
 	folder.open();
 }
 			
-MapViewer.prototype.animate = function() {
-    requestAnimationFrame(this.animate.bind(this));
+MapViewer.prototype.animate = function()
+{
+	requestAnimationFrame(this.animate.bind(this));
 	this.render();
 	this.stats.update();
 };
 
-MapViewer.prototype.render = function() {
+MapViewer.prototype.render = function()
+{
 	var delta = this.clock.getDelta();
-	this.updateGeo(delta);
+	if (this.skinConfig.Animate)
+		this.updateGeo(delta);
 	this.renderer.render(this.scene, this.camera);
 };
 
 MapViewer.resize = function()
 {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+	this.camera.aspect = window.innerWidth / window.innerHeight;
 	this.camera.updateProjectionMatrix();
 
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -283,16 +278,91 @@ function GetTexture(data, width, height)
 	return texture;
 }
 
-MapViewer.prototype.addMdl = function(mdl, skinidx)
-{	
-    var c = (255 << 16) + (0 << 8) + 255;
+MapViewer.prototype.getMat = function(mdl, animid)
+{
+	if (mdl.numTextures > 0 && animid < mdl.numTextures)
+	{
+		var mp = GetTexture( mdl.textures[animid], mdl.width, mdl.height );
+		mp.encoding = THREE.sRGBEncoding;
+		return new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
+	}
+	else
+		return new THREE.MeshBasicMaterial( {  } );
+}
+
+MapViewer.prototype.addMdl = function(mdl)
+{
+	var material = this.getMat(mdl, 0);
+	this.setupMesh(mdl, 0, material);
+	
+	this.resetAnim();
+	if (mdl.numFrames > 1)
+		this.playAnim(mdl, 0)
+	
+	this.gui2.removeFolder("skins");
+	if (mdl.numTextures > 1)
+	{
+		var folder = this.gui2.addFolder( "skins" );
+		
+		var generateCallback = function ( index )
+		{
+			return function ()
+			{
+				window.viewer.mesh.material = window.viewer.getMat(window.viewer.curmodel, index);
+			};
+		};
+	
+		for ( var i = 0; i < mdl.numTextures; i++ )
+		{
+			var name = 'skin ' + i.toString();
+	
+			this.skinConfig[ name ] = generateCallback( i );
+			folder.add( this.skinConfig, name ).name( name );
+		}
+		
+		folder.open();
+	}
+	
+	this.gui2.removeFolder("anims");
+	if (mdl.numFrames > 1)
+	{
+		var folder = this.gui2.addFolder( "anims" );
+		
+		var generateCallback = function ( index )
+		{
+			return function ()
+			{
+				window.viewer.playAnim(window.viewer.curmodel, index);
+			};
+		};
+	
+		for ( var i = 0; i < mdl.numAnims; i++ )
+		{
+			var name = 'anim ' + i.toString();
+	
+			this.skinConfig[ name ] = generateCallback( i );
+			folder.add( this.skinConfig, name ).name( name );
+		}
+		
+		folder.open();
+	}
+};
+
+MapViewer.prototype.setupMesh = function(mdl, animid, material, isanim)
+{
+	var animoffset = mdl.numVerts * animid;
+	var lastffset = (mdl.numFrames -1) * mdl.numVerts;
+		
+	if (this.mesh)
+	{
+		this.scene.remove(this.mesh);
+		this.mesh = null;
+	}
+	
 	this.geo = null;
 	this.geo = new THREE.Geometry();
 
-	var animid = 0;
-	var animoffset = mdl.numVerts * animid;
-	var lastffset = (mdl.numFrames -1) * mdl.numVerts;
-	
+		
 	for ( var n = 0; n < mdl.numFrames; n++ )
 	{
 		for ( var i = 0; i < mdl.numVerts; i++ )
@@ -307,11 +377,7 @@ MapViewer.prototype.addMdl = function(mdl, skinidx)
 	{
 		var idx = mdl.indexes[i];
 		
-		var plane = new THREE.Plane();
-		plane.setFromCoplanarPoints(this.geo.vertices[animoffset+idx.va], this.geo.vertices[animoffset+idx.vb], this.geo.vertices[animoffset+idx.vc]);
-	
-		var fc = new THREE.Face3(animoffset+idx.va, animoffset+idx.vb, animoffset+idx.vc, plane.normal, c);
-		fc.vertexColors = [ c, c, c ];
+		var fc = new THREE.Face3(animoffset+idx.va, animoffset+idx.vb, animoffset+idx.vc);
 		this.geo.faces.push(fc);
 		
 		var ta = mdl.texCoords[idx.ta];
@@ -325,66 +391,81 @@ MapViewer.prototype.addMdl = function(mdl, skinidx)
 		this.geo.faceVertexUvs[0].push([ uva, uvb, uvc ] );
 	}
 	
-    this.geo.mergeVertices();
-    this.geo.computeBoundingBox();
-    this.geo.computeVertexNormals();
-    this.geo.computeFaceNormals();
-    
-	var material = null;
-	if (mdl.numTextures > 0 && skinidx < mdl.numTextures)
-	{
-		var mp = GetTexture( mdl.textures[skinidx], mdl.width, mdl.height );
-		mp.encoding = THREE.sRGBEncoding;
-		material = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
-	}
-	else
-	{
-		material = new THREE.MeshBasicMaterial( {  } );
-	}
-	
-
-	if (this.mesh)
-		this.scene.remove(this.mesh);
-	this.mesh = null;
-	
-    	this.mesh = new THREE.Mesh(this.geo, material);
+	this.mesh = new THREE.Mesh(this.geo, material);
 	this.mesh.position.x = 0;
 	this.mesh.position.y = 0;
 	this.mesh.position.z = 0;
 	this.mesh.rotateY( Math.PI );
 	this.mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
 	
-   	this.scene.add(this.mesh);
-	
-	this.gui2.removeFolder("skins");
+	this.scene.add(this.mesh);
+}
 
-	if (mdl.numTextures > 1)
+MapViewer.prototype.resetAnim = function()
+{
+	this.animEndFrame = 1;
+	this.animCycles = -1;
+	this.animStartFrame = 0;
+	this.animCurrentFrame = 0;
+	this.animNumFrames = 1;
+	this.animSpeed = 3840;
+}
+
+MapViewer.prototype.playAnim = function(mdl, id)
+{
+	if ( mdl.numAnims <= id )
+		return;
+	
+	var speed = mdl.anims[id].speed;
+	var startFrame = mdl.anims[id].startFrame;
+	var endFrame = mdl.anims[id].endFrame;
+	var numFrames = endFrame - startFrame;
+	
+	this.animNumFrames = numFrames << 8;
+	this.animStartFrame =  startFrame << 8;
+	this.animCurrentFrame =  startFrame << 8;
+	this.animEndFrame = (startFrame << 8) + (numFrames << 8);
+	if (speed != 10)
+		this.animSpeed = 3840 * ((speed << 16) / 2560) >> 8;
+	else
+		this.animSpeed = 3840;
+	
+	this.animCycles = 1;
+}
+
+MapViewer.prototype.stepAnim = function(mdl, delta)
+{
+	var dt = Math.floor((delta*this.skinConfig.AnimSpeed)*1000);
+	var tm = (dt << 8) / 1000;
+	
+	if ( this.animCycles != 0 )
 	{
-		var folder2 = this.gui2.addFolder( "skins" );
+		this.animCurrentFrame = this.animCurrentFrame + (tm * this.animSpeed >> 8);
 		
-
-		var generateCallback = function ( index )
+		if ( this.animCurrentFrame >= this.animEndFrame )
 		{
-			return function ()
-			{
-				window.viewer.addMdl(window.viewer.curmodel, index);
-			};
-		};
-	
-		for ( var i = 0; i < mdl.numTextures; i++ )
-		{
-			var name = i.toString();
-	
-			this.skinConfig[ name ] = generateCallback( i );
-			folder2.add( this.skinConfig, name ).name( name );
+			if (this.skinConfig.CycleAnim)
+				this.animCurrentFrame = this.animStartFrame + (1<<8);
+			else
+				this.animCurrentFrame = this.animEndFrame - (1<<8);
 		}
 		
-		folder2.open();
+		if ( this.animCurrentFrame < this.animStartFrame )
+			this.animCurrentFrame = this.animStartFrame;
 	}
-};
+}
 
-MapViewer.prototype.updateGeo = function(delta) {
-
+MapViewer.prototype.updateGeo = function(delta)
+{
+	if (this.curmodel && this.mesh)
+	{
+		if (this.curmodel.numFrames > 1)
+		{
+			this.stepAnim(this.curmodel, delta);			
+			var material = this.mesh.material;
+			this.setupMesh(this.curmodel, this.animCurrentFrame >> 8, material);
+		}
+	}
 };
 
 function loadText(filename, cb)
@@ -393,19 +474,21 @@ function loadText(filename, cb)
 	req.open("GET", filename, true);
 	req.responseType = "text";
 
-	req.onload = function(oEvent){
+	req.onload = function(oEvent)
+	{
 		cb(req.response);
 	};
 
 	req.send(null);
 }
 
-function main() {
-    window.viewer = new MapViewer();
+function main()
+{
+	window.viewer = new MapViewer();
 
 	jBinary.load('tes/models.idx', tIdx).then(function(jb)
 	{
-        modelsinfo = jb.readAll();
+		modelsinfo = jb.readAll();
 		
 		loadText('tes/models.txt', function(text)
 		{
@@ -429,9 +512,9 @@ function main() {
 			window.viewer.setupModelsGUI(data);
 			
 		});
-    });
+	});
 	
-	LoadData(58, 0);
+	LoadData(58);
 	
 	console.log('loaded');
 }
