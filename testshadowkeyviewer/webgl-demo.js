@@ -283,6 +283,8 @@ MapViewer.prototype.getMat = function(mdl, animid)
 	if (mdl.numTextures > 0 && animid < mdl.numTextures)
 	{
 		var mp = GetTexture( mdl.textures[animid], mdl.width, mdl.height );
+		mp.wrapS = THREE.RepeatWrapping;
+		mp.wrapT = THREE.RepeatWrapping;
 		mp.encoding = THREE.sRGBEncoding;
 		return new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
 	}
