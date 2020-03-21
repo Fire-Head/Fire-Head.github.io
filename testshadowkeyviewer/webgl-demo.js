@@ -114,9 +114,9 @@ MapViewer.prototype.init = function()
 {
 	this.clock = new THREE.Clock();
 	
-	this.renderer = new THREE.WebGLRenderer({ antialias: true });
+	this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 	this.renderer.setPixelRatio( window.devicePixelRatio );
-	this.renderer.setClearColor( 0x000000 );
+	this.renderer.setClearColor( 0x000000, 1 );
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
 	this.renderer.outputEncoding = THREE.sRGBEncoding;
 	
@@ -286,7 +286,10 @@ MapViewer.prototype.getMat = function(mdl, animid)
 		mp.wrapS = THREE.RepeatWrapping;
 		mp.wrapT = THREE.RepeatWrapping;
 		mp.encoding = THREE.sRGBEncoding;
-		return new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
+		var mat = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
+		mat.side = THREE.DoubleSide;
+		mat.alphaTest = 0.5;
+		return mat;
 	}
 	else
 		return new THREE.MeshBasicMaterial( {  } );
