@@ -127,6 +127,11 @@ MapViewer.prototype.init = function() {
 		
 	};
 	
+	this.skinConfig =
+	{
+		
+	};
+	
 	this.gui = new dat.GUI();
 	this.gui2 = new dat.GUI();
 
