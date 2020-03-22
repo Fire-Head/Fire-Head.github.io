@@ -156,10 +156,15 @@ MapViewer.prototype.init = function()
 	this.rec = false;
 	
 	this.playbackConfig = {  };
-	this.skinConfig = { Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, RecordStart: this.recStart, RecordStop: this.recStop };
+	this.skinConfig = { NearestFiltering: true, Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, RecordStart: this.recStart, RecordStop: this.recStop };
 	
 	this.gui = new dat.GUI();
 	this.gui2 = new dat.GUI();
+	
+	this.gui2.add( this.skinConfig, 'NearestFiltering', true ).onChange( function ()
+	{
+		window.viewer.addMdl(window.viewer.curmodel);
+	} );
 	
 	this.gui2.add( this.skinConfig, 'Grid', true ).onChange( function ()
 	{
@@ -298,7 +303,9 @@ function GetTexture(data, width, height)
 	}
 	
 	texture.needsUpdate = true;
-			
+	if ( window.viewer.skinConfig.NearestFiltering )
+		texture.magFilter = THREE.NearestFilter;
+	
 	return texture;
 }
 
