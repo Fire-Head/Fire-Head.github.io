@@ -156,7 +156,7 @@ MapViewer.prototype.init = function()
 	this.rec = false;
 	
 	this.playbackConfig = {  };
-	this.skinConfig = { NearestFiltering: true, Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, RecordStart: this.recStart, RecordStop: this.recStop };
+	this.skinConfig = { TransparentBackground: true, NearestFiltering: true, Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, RecordStart: this.recStart, RecordStop: this.recStop };
 	
 	this.gui = new dat.GUI();
 	this.gui2 = new dat.GUI();
@@ -164,6 +164,13 @@ MapViewer.prototype.init = function()
 	this.gui2.add( this.skinConfig, 'NearestFiltering', true ).onChange( function ()
 	{
 		window.viewer.addMdl(window.viewer.curmodel);
+	} );
+	this.gui2.add( this.skinConfig, 'TransparentBackground', true ).onChange( function ()
+	{
+		if (window.viewer.skinConfig.TransparentBackground)
+			window.viewer.renderer.setClearColor( 0x00000000, 0 );
+		else
+			window.viewer.renderer.setClearColor( 0x00000000, 1.0 );
 	} );
 	
 	this.gui2.add( this.skinConfig, 'Grid', true ).onChange( function ()
