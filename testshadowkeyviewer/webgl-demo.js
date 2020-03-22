@@ -104,6 +104,11 @@ function LoadData(mid)
 	
 }
 
+const recorder = new CCapture({
+	format: 'png',
+	display: true,
+});
+
 var MapViewer = function()
 {
 	this.init();
@@ -114,9 +119,9 @@ MapViewer.prototype.init = function()
 {
 	this.clock = new THREE.Clock();
 	
-	this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+	this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
 	this.renderer.setPixelRatio( window.devicePixelRatio );
-	this.renderer.setClearColor( 0x000000, 1 );
+	this.renderer.setClearColor( 0x00000000, 0 );
 	this.renderer.setSize( window.innerWidth, window.innerHeight );
 	this.renderer.outputEncoding = THREE.sRGBEncoding;
 	
@@ -148,8 +153,10 @@ MapViewer.prototype.init = function()
 	this.stats = new Stats();
 	this.container.appendChild( this.stats.dom );
 	
+	this.rec = false;
+	
 	this.playbackConfig = {  };
-	this.skinConfig = { Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, };
+	this.skinConfig = { Grid: true, Animate: true, CycleAnim : true, AnimSpeed: 1.0, RecordStart: this.recStart, RecordStop: this.recStop };
 	
 	this.gui = new dat.GUI();
 	this.gui2 = new dat.GUI();
@@ -165,9 +172,24 @@ MapViewer.prototype.init = function()
 	this.gui2.add( this.skinConfig, 'Animate', true );
 	this.gui2.add( this.skinConfig, 'CycleAnim', true );
 	this.gui2.add( this.skinConfig, 'AnimSpeed', 0, 10 )
+	this.gui2.add( this.skinConfig, 'RecordStart' )
+	this.gui2.add( this.skinConfig, 'RecordStop' )
 	
 	window.addEventListener('resize', this.resize, false)
 };
+
+MapViewer.prototype.recStart = function()
+{
+	window.viewer.rec = true;
+	recorder.start();
+}
+
+MapViewer.prototype.recStop = function()
+{
+	window.viewer.rec = false;
+	recorder.stop();
+	recorder.save();
+}
 
 MapViewer.prototype.setupModelsGUI = function(modeldefs)
 {
@@ -214,6 +236,8 @@ MapViewer.prototype.render = function()
 	if (this.skinConfig.Animate)
 		this.updateGeo(delta);
 	this.renderer.render(this.scene, this.camera);
+	if (this.rec)
+		recorder.capture(this.renderer.domElement);
 };
 
 MapViewer.resize = function()
