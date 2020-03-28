@@ -325,7 +325,7 @@ MapViewer.prototype.getMat = function(mdl, animid)
 		mp.wrapT = THREE.RepeatWrapping;
 		mp.encoding = THREE.sRGBEncoding;
 		var mat = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
-		mat.side = THREE.DoubleSide;
+		//mat.side = THREE.DoubleSide;
 		mat.alphaTest = 0.5;
 		return mat;
 	}
