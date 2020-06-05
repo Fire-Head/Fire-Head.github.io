@@ -131,7 +131,8 @@ MapViewer.prototype.init = function()
 	this.container.appendChild( this.renderer.domElement );
 
 	this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .01, 1000)
-	this.camera.position.set( 0.075, 2.075, 4.55 );
+	//this.camera.position.set( 0.075, 2.075, 4.55 );
+	this.camera.position.set( 0.50, 2.30, -6.55 );
 
 	this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 	this.controls.enableDamping = true
@@ -412,7 +413,7 @@ MapViewer.prototype.setupMesh = function(mdl, animid, material, isanim)
 		{
 			var vert = mdl.vertices[n][i];
 			
-			this.geo.vertices.push(new THREE.Vector3(1.0 - fx8_8_to_float(vert.x), fx8_8_to_float(vert.y), fx8_8_to_float(vert.z)));
+			this.geo.vertices.push(new THREE.Vector3(1.0 - fx8_8_to_float(vert.x), fx8_8_to_float(vert.y), 1.0 - fx8_8_to_float(vert.z)));
 		}
 	}
 	
