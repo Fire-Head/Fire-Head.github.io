@@ -322,7 +322,7 @@ MapViewer.prototype.getMat = function(mdl, animid)
 	{
 		var mp = GetTexture( mdl.textures[animid], mdl.width, mdl.height );
 		mp.wrapS = THREE.RepeatWrapping;
-		mp.wrapT = THREE.RepeatWrapping;
+		mp.wrapT = THREE.MirroredRepeatWrapping;
 		mp.encoding = THREE.sRGBEncoding;
 		var mat = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
 		//mat.side = THREE.DoubleSide;
@@ -412,7 +412,7 @@ MapViewer.prototype.setupMesh = function(mdl, animid, material, isanim)
 		{
 			var vert = mdl.vertices[n][i];
 			
-			this.geo.vertices.push(new THREE.Vector3(fx8_8_to_float(vert.x), fx8_8_to_float(vert.y), fx8_8_to_float(vert.z)));
+			this.geo.vertices.push(new THREE.Vector3(1.0 - fx8_8_to_float(vert.x), fx8_8_to_float(vert.y), fx8_8_to_float(vert.z)));
 		}
 	}
 	
