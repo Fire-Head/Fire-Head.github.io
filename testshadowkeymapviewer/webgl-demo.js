@@ -541,7 +541,7 @@ function ParseMesh(mdl, animid, id)
 		{
 			var vert = mdl.vertices[n][i];
 			
-			geo.vertices.push(new THREE.Vector3(1.0 - fx8_8_to_float(vert.x), fx8_8_to_float(vert.y), 1.0 - fx8_8_to_float(vert.z)));
+			geo.vertices.push(new THREE.Vector3(fx8_8_to_float(vert.x), fx8_8_to_float(vert.y), fx8_8_to_float(vert.z)));
 		}
 	}
 	
@@ -556,16 +556,16 @@ function ParseMesh(mdl, animid, id)
 		var tb = mdl.texCoords[idx.tb];
 		var tc = mdl.texCoords[idx.tc];
 		
-		var uva = new THREE.Vector2(fx8_8_to_float(ta.u)/(mdl.width), 1.0 - (fx8_8_to_float(ta.v)/(mdl.height)));
-		var uvb = new THREE.Vector2(fx8_8_to_float(tb.u)/(mdl.width), 1.0 - (fx8_8_to_float(tb.v)/(mdl.height)));
-		var uvc = new THREE.Vector2(fx8_8_to_float(tc.u)/(mdl.width), 1.0 - (fx8_8_to_float(tc.v)/(mdl.height)));
+		var uva = new THREE.Vector2(fx8_8_to_float(ta.u)/(mdl.width), 1.0-(fx8_8_to_float(ta.v)/(mdl.height)));
+		var uvb = new THREE.Vector2(fx8_8_to_float(tb.u)/(mdl.width), 1.0-(fx8_8_to_float(tb.v)/(mdl.height)));
+		var uvc = new THREE.Vector2(fx8_8_to_float(tc.u)/(mdl.width), 1.0-(fx8_8_to_float(tc.v)/(mdl.height)));
 		
 		geo.faceVertexUvs[0].push([ uva, uvb, uvc ] );
 	}
 	
 	var mp = GetTexture( mdl.textures[animid], mdl.width, mdl.height );
 	mp.wrapS = THREE.RepeatWrapping;
-	mp.wrapT = THREE.MirroredRepeatWrapping;
+	mp.wrapT = THREE.RepeatWrapping;
 	mp.encoding = THREE.sRGBEncoding;
 	
 	var mat = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
@@ -574,10 +574,54 @@ function ParseMesh(mdl, animid, id)
 	mat.name = "mat_model" + id + "tex" + animid;
 	var mesh = new THREE.Mesh(geo, mat);
 	
-	mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-	mesh.geometry.computeBoundingBox();
+	//mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, -1));
+
+	//mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+	//reverseWindingOrder(object3D);
+	
+	//mesh.rotateY( Math.PI );
+	//mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+	//mesh.geometry.computeBoundingBox();
 	
 	return mesh;
+}
+
+function reverseWindingOrder(object3D) {
+
+    // TODO: Something is missing, the objects are flipped alright but the light reflection on them is somehow broken
+
+    if (object3D.type === "Mesh") {
+
+        var geometry = object3D.geometry;
+
+        for (var i = 0, l = geometry.faces.length; i < l; i++) {
+
+            var face = geometry.faces[i];
+            var temp = face.a;
+            face.a = face.c;
+            face.c = temp;
+
+        }
+
+        var faceVertexUvs = geometry.faceVertexUvs[0];
+        for (i = 0, l = faceVertexUvs.length; i < l; i++) {
+
+            var vector2 = faceVertexUvs[i][0];
+            faceVertexUvs[i][0] = faceVertexUvs[i][2];
+            faceVertexUvs[i][2] = vector2;
+        }
+
+        geometry.computeFaceNormals();
+        geometry.computeVertexNormals();
+    }
+
+    if (object3D.children) {
+
+        for (var j = 0, jl = object3D.children.length; j < jl; j++) {
+
+            reverseWindingOrder(object3D.children[j]);
+        }
+    }
 }
 
 function LoadModels(lines)
@@ -964,7 +1008,7 @@ MapViewer.prototype.SetupScene = function()
 			var myuvs = [];
 		
 			for ( var i = 0; i < Vertices[t].length; i+=3 )
-				myvertices.push( Vertices[t][i], Vertices[t][i+2], Vertices[t][i+1] );
+				myvertices.push( -Vertices[t][i], Vertices[t][i+2], Vertices[t][i+1] );
 			
 			for ( var i = 0; i < Indeses[t].length; i+=3 )
 				myindices.push( Indeses[t][i], Indeses[t][i+2], Indeses[t][i+1] );
@@ -1005,20 +1049,22 @@ MapViewer.prototype.SetupScene = function()
 				//else
 				{					
 					var m = Models[e.model].clone();
-				
+					//m.rotateY( Math.PI );
 					//m.geometry.computeBoundingBox();
+					//m.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+					//
 					
 					//m.applyMatrix(new THREE.Matrix4().makeScale(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale)));
 					
-					m.position.set(fx8_8_to_float(ent.x)-1, fx8_8_to_float(ent.z), fx8_8_to_float(ent.y)-1);
+					m.position.set(-(fx8_8_to_float(ent.x)), fx8_8_to_float(ent.z), fx8_8_to_float(ent.y));
 					
 					m.geometry.computeBoundingBox();
 					m.scale.set(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale));
 					//m.geometry.boundingBox.set(new THREE.Vector3(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale)), new THREE.Vector3(-fx8_8_to_float(ent.Scale), -fx8_8_to_float(ent.Scale), -fx8_8_to_float(ent.Scale)));
 					
-					m.rotateX(fx8_8_to_float(ent.Roll) *(Math.PI /127));
-					m.rotateZ(fx8_8_to_float(ent.Pitch) *(Math.PI /127));
-					m.rotateY(fx8_8_to_float(ent.Turn) *(Math.PI /127)); // turn/yaw
+					m.rotateX(-Math.PI-(fx8_8_to_float(ent.Roll) *(Math.PI / 127))) ;
+					m.rotateZ(-Math.PI-(fx8_8_to_float(ent.Pitch) *(Math.PI /127)));
+					m.rotateY(-Math.PI-(fx8_8_to_float(ent.Turn) *(Math.PI /127))); // turn/yaw
 					
 					if ( this.skinConfig.DbgBounds )
 					{
