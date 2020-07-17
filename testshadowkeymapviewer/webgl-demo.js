@@ -533,9 +533,8 @@ function ParseMesh(mdl, animid, id)
 	var lastffset = (mdl.numFrames -1) * mdl.numVerts;
 	
 	var geo = new THREE.Geometry();
-
-		
-	for ( var n = 0; n < mdl.numFrames; n++ )
+	
+	var n = animid; //for ( var n = 0; n < mdl.numFrames; n++ )
 	{
 		for ( var i = 0; i < mdl.numVerts; i++ )
 		{
@@ -565,63 +564,39 @@ function ParseMesh(mdl, animid, id)
 	
 	var mp = GetTexture( mdl.textures[animid], mdl.width, mdl.height );
 	mp.wrapS = THREE.RepeatWrapping;
-	mp.wrapT = THREE.RepeatWrapping;
+	mp.wrapT = THREE.MirroredRepeatWrapping;
 	mp.encoding = THREE.sRGBEncoding;
 	
 	var mat = new THREE.MeshBasicMaterial( { map: mp, transparent: true } );
 	mat.alphaTest = 0.5;
 	
 	mat.name = "mat_model" + id + "tex" + animid;
+	var mS = (new THREE.Matrix4()).identity();
+	mS.elements[10] = -1;
+	
+	geo.applyMatrix(mS);
+	
+	var tmp;
+	for(var f = 0; f < geo.faces.length; f++) {
+		tmp = geo.faces[f].clone();
+		geo.faces[f].a = tmp.c;
+		geo.faces[f].c = tmp.a;
+	}
+
+	geo.computeFaceNormals();
+	geo.computeVertexNormals();
+
+	var faceVertexUvs = geo.faceVertexUvs[ 0 ];
+	for ( var i = 0; i < faceVertexUvs.length; i ++ ) {
+
+		var temp = faceVertexUvs[ i ][ 0 ];
+		faceVertexUvs[ i ][ 0 ] = faceVertexUvs[ i ][ 2 ];
+		faceVertexUvs[ i ][ 2 ] = temp;
+	}
+
 	var mesh = new THREE.Mesh(geo, mat);
 	
-	//mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, -1));
-
-	//mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-	//reverseWindingOrder(object3D);
-	
-	//mesh.rotateY( Math.PI );
-	//mesh.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-	//mesh.geometry.computeBoundingBox();
-	
 	return mesh;
-}
-
-function reverseWindingOrder(object3D) {
-
-    // TODO: Something is missing, the objects are flipped alright but the light reflection on them is somehow broken
-
-    if (object3D.type === "Mesh") {
-
-        var geometry = object3D.geometry;
-
-        for (var i = 0, l = geometry.faces.length; i < l; i++) {
-
-            var face = geometry.faces[i];
-            var temp = face.a;
-            face.a = face.c;
-            face.c = temp;
-
-        }
-
-        var faceVertexUvs = geometry.faceVertexUvs[0];
-        for (i = 0, l = faceVertexUvs.length; i < l; i++) {
-
-            var vector2 = faceVertexUvs[i][0];
-            faceVertexUvs[i][0] = faceVertexUvs[i][2];
-            faceVertexUvs[i][2] = vector2;
-        }
-
-        geometry.computeFaceNormals();
-        geometry.computeVertexNormals();
-    }
-
-    if (object3D.children) {
-
-        for (var j = 0, jl = object3D.children.length; j < jl; j++) {
-
-            reverseWindingOrder(object3D.children[j]);
-        }
-    }
 }
 
 function LoadModels(lines)
@@ -1049,22 +1024,15 @@ MapViewer.prototype.SetupScene = function()
 				//else
 				{					
 					var m = Models[e.model].clone();
-					//m.rotateY( Math.PI );
-					//m.geometry.computeBoundingBox();
-					//m.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-					//
-					
-					//m.applyMatrix(new THREE.Matrix4().makeScale(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale)));
 					
 					m.position.set(-(fx8_8_to_float(ent.x)), fx8_8_to_float(ent.z), fx8_8_to_float(ent.y));
 					
 					m.geometry.computeBoundingBox();
 					m.scale.set(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale));
-					//m.geometry.boundingBox.set(new THREE.Vector3(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale)), new THREE.Vector3(-fx8_8_to_float(ent.Scale), -fx8_8_to_float(ent.Scale), -fx8_8_to_float(ent.Scale)));
-					
-					m.rotateX(-Math.PI-(fx8_8_to_float(ent.Roll) *(Math.PI / 127))) ;
-					m.rotateZ(-Math.PI-(fx8_8_to_float(ent.Pitch) *(Math.PI /127)));
-					m.rotateY(-Math.PI-(fx8_8_to_float(ent.Turn) *(Math.PI /127))); // turn/yaw
+
+					m.rotateX(-(fx8_8_to_float(ent.Roll) *(Math.PI / 127))) ;
+					m.rotateZ(-(fx8_8_to_float(ent.Pitch) *(Math.PI /127)));
+					m.rotateY(-(fx8_8_to_float(ent.Turn) *(Math.PI /127))); // turn/yaw
 					
 					if ( this.skinConfig.DbgBounds )
 					{
@@ -1077,48 +1045,7 @@ MapViewer.prototype.SetupScene = function()
 				}
 			}
 		}
-		
-		/*
-		
-		
-		if ( EntitiesMap[ent.template] )
-		{
-			if ( Models[EntitiesMap[ent.template]] )
-			{
-				var m = Models[EntitiesMap[ent.template]].clone();
-				
-				//m.geometry.computeBoundingBox();
-				
-				//m.applyMatrix(new THREE.Matrix4().makeScale(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale)));
-				
-				m.position.set(fx8_8_to_float(ent.x)-1, fx8_8_to_float(ent.z), fx8_8_to_float(ent.y)-1);
-				
-				m.geometry.computeBoundingBox();
-				m.scale.set(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale));
-				//m.geometry.boundingBox.set(new THREE.Vector3(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale)), new THREE.Vector3(-fx8_8_to_float(ent.Scale), -fx8_8_to_float(ent.Scale), -fx8_8_to_float(ent.Scale)));
-				
-				m.rotateX(fx8_8_to_float(ent.Roll) *(Math.PI /127));
-				m.rotateZ(fx8_8_to_float(ent.Pitch) *(Math.PI /127));
-				m.rotateY(fx8_8_to_float(ent.Turn) *(Math.PI /127)); // turn/yaw
-				
-				//m.geometry.computeBoundingBox();
-				
-				if ( this.skinConfig.DbgBounds )
-				{
-					var helper = new THREE.BoundingBoxHelper(m, 0xff0000);
-					helper.update();
-					mapgroup.add( helper );
-				}
-	
-				mapgroup.add( m );
-			}
-			else console.log('model ' + ent.template + ' is null');
-		}
-		else console.log('ent ' + ent.template + ' is null');
-		*/
 	}
-	
-	
 	
 	var completeBoundingBox = new THREE.Box3();
 	completeBoundingBox.expandByObject(mapgroup);
