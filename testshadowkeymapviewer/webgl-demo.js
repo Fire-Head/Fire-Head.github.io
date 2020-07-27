@@ -186,14 +186,14 @@ var tTextures =
 	}
 };
 
-var tPalette =
+var tLUA =
 {	
 	'jBinary.all': 'File',
 	'jBinary.littleEndian': true,
 	
 	File:
 	{
-		pal: ['array', 'uint8', 768],
+		pal: ['array', 'uint16', context => (256*256)],
 	}
 };
 
@@ -346,10 +346,12 @@ MapViewer.prototype.init = function()
 	this.rec = false;
 	
 	this.playbackConfig = {  };
-	this.skinConfig = { TransparentBackground: false, NearestFiltering: true, DbgBounds: true, Grid: false, ExportObj: this.expObj };
+	this.skinConfig = { DrawProps: true, DrawCelling: false, TransparentBackground: false, NearestFiltering: true, DbgBounds: false, Grid: false, ExportObj: this.expObj, ExportGLTF : this.expGLTF };
 	
 	this.gui = new dat.GUI();
 	
+	this.gui.add( this.skinConfig, 'DrawProps', true ).onChange( function (){} );
+	this.gui.add( this.skinConfig, 'DrawCelling', true ).onChange( function (){} );
 	this.gui.add( this.skinConfig, 'NearestFiltering', true ).onChange( function (){} );
 	this.gui.add( this.skinConfig, 'DbgBounds', true ).onChange( function (){} );
 	
@@ -368,8 +370,9 @@ MapViewer.prototype.init = function()
 		else
 			window.viewer.scene.remove( window.viewer.grid );
 	} );
-	
+
 	this.gui.add( this.skinConfig, 'ExportObj' )
+	this.gui.add( this.skinConfig, 'ExportGLTF' )
 	
 	var folder = this.gui.addFolder( "maps" );
 		
@@ -377,7 +380,7 @@ MapViewer.prototype.init = function()
 	{
 		return function ()
 		{
-			LoadZ(name );
+			LoadZ(name, window.viewer.skinConfig.DrawProps);
 		};
 	};
 	
@@ -503,9 +506,7 @@ function GetTexture(data, width, height)
 
 function main()
 {
-	
-	window.viewer = new MapViewer();
-	
+	window.viewer = new MapViewer();	
 	console.log('loaded');
 }
 
@@ -515,7 +516,7 @@ var CellPalette = null;
 var pMap = null;
 var Surface = null;
 var Textures = null;
-var PalData = null;
+var LUAData = null;
 var Entities = null;
 var Models = new Array(256);
 var EntitiesMap = {};
@@ -563,6 +564,7 @@ function ParseMesh(mdl, animid, id)
 	}
 	
 	var mp = GetTexture( mdl.textures[animid], mdl.width, mdl.height );
+	mp.flipY = false;
 	mp.wrapS = THREE.RepeatWrapping;
 	mp.wrapT = THREE.MirroredRepeatWrapping;
 	mp.encoding = THREE.sRGBEncoding;
@@ -638,7 +640,7 @@ function LoadModels(lines)
 	});
 }
 
-function LoadZ(name)
+function LoadZ(name, usemodels)
 {
 	ReadZ('tes/'+name+'.zcp', tCellPalette, function(cp)
 	{
@@ -652,20 +654,26 @@ function LoadZ(name)
 				ReadZ('tes/'+name+'.ztx', tTextures, function(tex)
 				{
 					Textures = tex;
-					Read('tes/'+name+'.pal', tPalette, function(pal)
+					
+					ReadZ('tes/'+name+'.zlu', tLUA, function(lua)
 					{
-						PalData = pal;
+						LUAData = lua;
 						
-						Read('tes/'+name+'.ent', tEntity, function(ent)
+						if ( usemodels )
 						{
-							Entities = ent;
-							
-							loadText('tes/'+name+'_models.txt', function(txt)
+							Read('tes/'+name+'.ent', tEntity, function(ent)
 							{
-								let lines = txt.split("\n");
-								LoadModels(lines)
+								Entities = ent;
+								
+								loadText('tes/'+name+'_models.txt', function(txt)
+								{
+									let lines = txt.split("\n");
+									LoadModels(lines)
+								});
 							});
-						});
+						}
+						else
+							LoadedEvent();
 					});
 				});
 			});
@@ -677,8 +685,6 @@ function LoadedEvent()
 {	
 	window.viewer.SetupScene();
 }
-
-var indexcount = 0;
 
 function GetLevelTexture(ti)
 {
@@ -699,15 +705,17 @@ function GetLevelTexture(ti)
 		{
 			var i = 0;
 						
-			for ( var y = height-1; y >= 0; y-- )
+			for ( var y = 0; y < height; y++ )
 			{
 				for ( var x = 0; x < width; x++, i += 4 )
 				{
 					var index = Textures.tex[ti][y*width+x];
-			
-					var r = PalData.pal[index * 3 + 0];
-					var g = PalData.pal[index * 3 + 1];
-					var b = PalData.pal[index * 3 + 2];
+					
+					var pixel = LUAData.pal[index+256*32];
+					
+					var r = CLUT4BitTo8Bit(pixel & 15);
+					var g = CLUT4BitTo8Bit((pixel>>4) & 15);
+					var b = CLUT4BitTo8Bit((pixel>>8) & 15);
 			
 					imageData.data[ i + 0 ] = b;
 					imageData.data[ i + 1 ] = g;			
@@ -745,10 +753,16 @@ MapViewer.prototype.SetupScene = function()
 	for ( var i = 0; i < Surface.numSurfaces; i++ )
 	{
 		var mp = GetLevelTexture( Surface.surf[i].Tex );
+		mp.flipY = false;
 		mp.wrapS = THREE.RepeatWrapping;
-		mp.wrapT = THREE.MirroredRepeatWrapping;
+		mp.wrapT = THREE.RepeatWrapping;
 		mp.encoding = THREE.sRGBEncoding;
-		var mat = new THREE.MeshBasicMaterial( { map: mp, side: THREE.DoubleSide } );
+		var mat;
+		if ( this.skinConfig.DrawCelling  )
+			mat = new THREE.MeshBasicMaterial( { map: mp } );
+		else
+			mat = new THREE.MeshBasicMaterial( { map: mp, side: THREE.DoubleSide } );
+		
 		mat.name = "mat_tx" + Surface.surf[i].Tex;
 		Materials[i] = mat;
 		Geometry[i] = new THREE.BufferGeometry();
@@ -757,11 +771,6 @@ MapViewer.prototype.SetupScene = function()
 		UVs[i] = [];
 		Count[i] = 0;
 	}
-
-	
-	var indices = [];
-	var vertices = [];
-
 
 	for ( var y = 0; y < pMap.height; y++ )
 	{
@@ -790,7 +799,7 @@ MapViewer.prototype.SetupScene = function()
 			var posYGreatenThenPos = true;
 
 			var camAboveCell       = true;
-			var ceilOk             = false; //CamZ < GetCeil()
+			var ceilOk             = true; //CamZ < GetCeil()
 			
 			if ( posXLessThenPos || c.Flag & 8 )
 			{
@@ -807,7 +816,7 @@ MapViewer.prototype.SetupScene = function()
 							new xyz( x+1,  y+1, fx8_8_to_float(nxcp.floors[0])                   )
 						);
 						
-						BuildVerts(wrldSector, nxcp.surface[4], vertices, indices, Surface.surf[nxcp.surface[0]].Flags&2 ? 0 : 1);
+						BuildVerts(wrldSector, nxcp.surface[4], Surface.surf[nxcp.surface[0]].Flags&2 ? 0 : 1);
 					}
 					
 					if (   max(cp.floors[2], nxcp.ceils[3]) < cp.ceils[2]
@@ -821,7 +830,7 @@ MapViewer.prototype.SetupScene = function()
 							new xyz( x+1,  y+1, fx8_8_to_float(cp.ceils[1])                       )
 						);
 						
-						BuildVerts(wrldSector, nxcp.surface[0], vertices, indices, Surface.surf[nxcp.surface[0]].Flags&2 ? 0 : 1);
+						BuildVerts(wrldSector, nxcp.surface[0], Surface.surf[nxcp.surface[0]].Flags&2 ? 0 : 1);
 					}
 				}
 			}
@@ -841,7 +850,7 @@ MapViewer.prototype.SetupScene = function()
 							new xyz( x,  y  , fx8_8_to_float(pxcp.floors[2])                   )
 						);
 						
-						BuildVerts(wrldSector, pxcp.surface[5], vertices, indices, Surface.surf[pxcp.surface[1]].Flags&2 ? 1 : 0);
+						BuildVerts(wrldSector, pxcp.surface[5], Surface.surf[pxcp.surface[1]].Flags&2 ? 1 : 0);
 					}
 					
 					if (   max(cp.floors[0], pxcp.ceils[1]) < cp.ceils[0]
@@ -855,7 +864,7 @@ MapViewer.prototype.SetupScene = function()
 							new xyz( x,  y  , fx8_8_to_float(cp.ceils[3])                       )
 						);
 						
-						BuildVerts(wrldSector, pxcp.surface[1], vertices, indices, Surface.surf[pxcp.surface[1]].Flags&2 ? 1 : 0);
+						BuildVerts(wrldSector, pxcp.surface[1], Surface.surf[pxcp.surface[1]].Flags&2 ? 1 : 0);
 					}
 				}
 			}
@@ -874,7 +883,7 @@ MapViewer.prototype.SetupScene = function()
 						new xyz( x,   y+1, fx8_8_to_float(nycp.floors[3]))
 					);
 					
-					BuildVerts(wrldSector, nycp.surface[6], vertices, indices, 2);
+					BuildVerts(wrldSector, nycp.surface[6], 2);
 				}
 				
 				if (   max(cp.floors[1], nycp.ceils[2]) < cp.ceils[1]
@@ -888,7 +897,7 @@ MapViewer.prototype.SetupScene = function()
 						new xyz( x,   y+1, fx8_8_to_float(cp.ceils[0])                        )
 					);
 					
-					BuildVerts(wrldSector, nycp.surface[2], vertices, indices, 2);
+					BuildVerts(wrldSector, nycp.surface[2], 2);
 				}
 			}
 			
@@ -906,7 +915,7 @@ MapViewer.prototype.SetupScene = function()
 						new xyz( x+1, y, fx8_8_to_float(pycp.floors[1]))
 					);
 					
-					BuildVerts(wrldSector, pycp.surface[7], vertices, indices, 3);
+					BuildVerts(wrldSector, pycp.surface[7], 3);
 				}
 				
 				if (   max(cp.floors[3], pycp.ceils[0]) < cp.ceils[3]
@@ -920,7 +929,7 @@ MapViewer.prototype.SetupScene = function()
 						new xyz( x+1, y, fx8_8_to_float(cp.ceils[2])                      )
 					);
 					
-					BuildVerts(wrldSector, pycp.surface[3], vertices, indices, 3);
+					BuildVerts(wrldSector, pycp.surface[3], 3);
 				}
 			}
 			
@@ -936,38 +945,42 @@ MapViewer.prototype.SetupScene = function()
 					new xyz( x,   y  , fx8_8_to_float(cp.floors[3]))
 				);
 				
-				BuildVerts(wrldSector, cp.surface[10], vertices, indices, 5);
+				BuildVerts(wrldSector, cp.surface[10], 5);
 			}
 			
-			if ( !(c.Flag & 2 && ceilOk && !( c.Flag & 64 )) )
+			
+			if ( this.skinConfig.DrawCelling )
 			{
-				if ( ceilOk )
+				if ( !(c.Flag & 2 && ceilOk && !( c.Flag & 64 )) )
 				{
-					if ( !(c.Flag & 2 ) )
+					//if ( ceilOk )
+					{
+						if ( !(c.Flag & 2 ) )
+						{
+							wrldSector = new WorldSector
+							(
+							
+								new xyz( x,   y  , fx8_8_to_float(cp.ceils[3])),
+								new xyz( x+1, y  , fx8_8_to_float(cp.ceils[2])),
+								new xyz( x+1, y+1, fx8_8_to_float(cp.ceils[1])),
+								new xyz( x,   y+1, fx8_8_to_float(cp.ceils[0]))
+							);
+							
+							BuildVerts(wrldSector, cp.surface[8], 4);
+						}
+					}
+					//else
 					{
 						wrldSector = new WorldSector
 						(
-						
-							new xyz( x,   y  , fx8_8_to_float(cp.floors[3])),
-							new xyz( x+1, y  , fx8_8_to_float(cp.floors[2])),
-							new xyz( x+1, y+1, fx8_8_to_float(cp.floors[1])),
-							new xyz( x,   y+1, fx8_8_to_float(cp.floors[0]))
+							new xyz( x,   y+1, fx8_8_to_float(cp.ceils[0])),
+							new xyz( x+1, y+1, fx8_8_to_float(cp.ceils[1])),
+							new xyz( x+1, y  , fx8_8_to_float(cp.ceils[2])),
+							new xyz( x,   y  , fx8_8_to_float(cp.ceils[3]))
 						);
 						
-						BuildVerts(wrldSector, cp.surface[8], vertices, indices, 4);
+						BuildVerts(wrldSector, cp.surface[9], 4);
 					}
-				}
-				else
-				{
-					wrldSector = new WorldSector
-					(
-						new xyz( x,   y+1, fx8_8_to_float(cp.floors[0])),
-						new xyz( x+1, y+1, fx8_8_to_float(cp.floors[1])),
-						new xyz( x+1, y  , fx8_8_to_float(cp.floors[2])),
-						new xyz( x,   y  , fx8_8_to_float(cp.floors[3]))
-					);
-					
-					BuildVerts(wrldSector, cp.surface[9], vertices, indices, 4);
 				}
 			}
 
@@ -989,7 +1002,7 @@ MapViewer.prototype.SetupScene = function()
 				myindices.push( Indeses[t][i], Indeses[t][i+2], Indeses[t][i+1] );
 			
 			for ( var i = 0; i < UVs[t].length; i+=2 )
-				myuvs.push( fx8_8_to_float(UVs[t][i]*2), fx8_8_to_float(UVs[t][i+1]*2) );
+				myuvs.push( UVs[t][i], UVs[t][i+1] );
 			
 			Geometry[t].setIndex( myindices );
 			Geometry[t].setAttribute( 'position', new THREE.Float32BufferAttribute( myvertices, 3 ) );
@@ -1001,47 +1014,50 @@ MapViewer.prototype.SetupScene = function()
 		}
 	}
 	
-	for ( var i = 0; i < Entities.numEntities; i++ )
+	if ( this.skinConfig.DrawProps )
 	{
-		var ent = Entities.entities[i];
-		var x = fx8_8_to_float(float_to_fx8_8(fx8_8_to_float(ent.x)));
-		var y = fx8_8_to_float(float_to_fx8_8(fx8_8_to_float(ent.y)));
-		
-		if ( x >= 0 && y >= 0 && x <= pMap.width && y <= pMap.height )
+		for ( var i = 0; i < Entities.numEntities; i++ )
 		{
-			var e = EntitiesMap[ent.template];
-			if ( e )
+			var ent = Entities.entities[i];
+			var x = fx8_8_to_float(float_to_fx8_8(fx8_8_to_float(ent.x)));
+			var y = fx8_8_to_float(float_to_fx8_8(fx8_8_to_float(ent.y)));
+			
+			if ( x >= 0 && y >= 0 && x <= pMap.width && y <= pMap.height )
 			{
-				///if ( ent.template == 10 || ent.template == 1050 ) // "!roof" || "!poolgook"
+				var e = EntitiesMap[ent.template];
+				if ( e )
 				{
-					;
-					//e.model
-					//
-					//e.height
-					
-					//if (x - e.width <= e.width + x)
-				}
-				//else
-				{					
-					var m = Models[e.model].clone();
-					
-					m.position.set(-(fx8_8_to_float(ent.x)), fx8_8_to_float(ent.z), fx8_8_to_float(ent.y));
-					
-					m.geometry.computeBoundingBox();
-					m.scale.set(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale));
-
-					m.rotateX(-(fx8_8_to_float(ent.Roll) *(Math.PI / 127))) ;
-					m.rotateZ(-(fx8_8_to_float(ent.Pitch) *(Math.PI /127)));
-					m.rotateY(-(fx8_8_to_float(ent.Turn) *(Math.PI /127))); // turn/yaw
-					
-					if ( this.skinConfig.DbgBounds )
+					///if ( ent.template == 10 || ent.template == 1050 ) // "!roof" || "!poolgook"
 					{
-						var helper = new THREE.BoundingBoxHelper(m, 0xff0000);
-						helper.update();
-						mapgroup.add( helper );
+						;
+						//e.model
+						//
+						//e.height
+						
+						//if (x - e.width <= e.width + x)
 					}
-		
-					mapgroup.add( m );
+					//else
+					{					
+						var m = Models[e.model].clone();
+						
+						m.position.set(-(fx8_8_to_float(ent.x)), fx8_8_to_float(ent.z), fx8_8_to_float(ent.y));
+						
+						m.geometry.computeBoundingBox();
+						m.scale.set(fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale), fx8_8_to_float(ent.Scale));
+	
+						m.rotateX(-(fx8_8_to_float(ent.Roll) *(Math.PI / 127))) ;
+						m.rotateZ(-(fx8_8_to_float(ent.Pitch) *(Math.PI /127)));
+						m.rotateY(-(fx8_8_to_float(ent.Turn) *(Math.PI /127))); // turn/yaw
+						
+						if ( this.skinConfig.DbgBounds )
+						{
+							var helper = new THREE.BoundingBoxHelper(m, 0xff0000);
+							helper.update();
+							mapgroup.add( helper );
+						}
+			
+						mapgroup.add( m );
+					}
 				}
 			}
 		}
@@ -1054,6 +1070,8 @@ MapViewer.prototype.SetupScene = function()
 	mapgroup.position.y -= objectCenter.y;
 	mapgroup.position.z -= objectCenter.z;
 	
+	//mapgroup.position.y += 25;
+	
 	if ( this.skinConfig.DbgBounds )
 	{
 		var helper = new THREE.BoundingBoxHelper(mapgroup, 0xff0000);
@@ -1064,6 +1082,20 @@ MapViewer.prototype.SetupScene = function()
 	this.scene.add( mapgroup );
 }
 
+MapViewer.prototype.expGLTF = function()
+{
+		
+	var exporter = new THREE.GLTFExporter();
+
+		exporter.parse( window.viewer.scene, function ( result ) {
+			var buff = str2ab(JSON.stringify( result, null, 2 ));
+			var blob = new Blob([buff]);
+		
+			saveAs(blob, 'map.gltf');
+	
+
+		} );
+}
 MapViewer.prototype.expObj = function()
 {
 	var exporter = new THREE.OBJExporter();
@@ -1099,7 +1131,7 @@ function WorldSector(_a, _b, _c, _d)
     this.d = _d;
 }
 
-function BuildVerts(sector, surf, arr, idx, uvtype)
+function BuildVerts(sector, surf, uvtype)
 {
 	if ( surf == 255 )
 		return;
@@ -1177,31 +1209,32 @@ function VertOffset(t, v)
 	
 }
 
+
 function GetUV(uvtype, v, uoffset, voffset, ushift, vshift)
 {
 	if ( uvtype == 0 )
 	{
-		this.u = (uoffset+(v.y))<<ushift;
-		this.v = (voffset+(v.z))<<vshift;
+		this.u = (fx8_8_to_float(uoffset)+(v.y))*(1<<ushift) / 128;
+		this.v = (fx8_8_to_float(voffset)+(v.z))*(1<<vshift) / 128;
 	}
 	else if ( uvtype == 1 )
 	{
-		this.u = (uoffset-(v.y))<<ushift;
-		this.v = (voffset+(v.z))<<vshift;
+		this.u = (fx8_8_to_float(uoffset)-(v.y))*(1<<ushift) / 128;
+		this.v = (fx8_8_to_float(voffset)+(v.z))*(1<<vshift) / 128;
 	}
 	else if ( uvtype == 2 )
 	{
-		this.u = (uoffset+(v.x))<<ushift;
-		this.v = (voffset+(v.z))<<vshift;
+		this.u = (fx8_8_to_float(uoffset)+(v.x))*(1<<ushift) / 128;
+		this.v = (fx8_8_to_float(voffset)+(v.z))*(1<<vshift) / 128;
 	}
 	else if ( uvtype == 3 )
 	{
-		this.u = (uoffset-(v.x))<<ushift;
-		this.v = (voffset+(v.z))<<vshift;
+		this.u = (fx8_8_to_float(uoffset)-(v.x))*(1<<ushift) / 128;
+		this.v = (fx8_8_to_float(voffset)+(v.z))*(1<<vshift) / 128;
 	}
 	else if ( uvtype == 4 || uvtype == 5 )
 	{
-		this.u = (uoffset+(v.x))<<ushift;
-		this.v = (voffset+(v.y))<<vshift;
+		this.u = (fx8_8_to_float(uoffset)+(v.x))*(1<<ushift) / 128;
+		this.v = (fx8_8_to_float(voffset)+(v.y))*(1<<vshift) / 128;
 	}
 }
