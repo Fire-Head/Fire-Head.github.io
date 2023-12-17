@@ -107,9 +107,11 @@ function GetVersionBySize(size)
 	*/
 	switch(size)
 	{
+		/*
 		case 1653:
 			return VER_PC;
 			break;
+		*/
 		case 2177:
 			return VER_MOBILE1_0;
 			break;
@@ -120,7 +122,7 @@ function GetVersionBySize(size)
 			return VER_MOBILE1_6;
 			break;
 		default:
-			return VER_UNKNOWN;
+			return VER_PC;
 	}
 	return VER_UNKNOWN;
 }
