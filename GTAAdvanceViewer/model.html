@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>GTA Advance Model Viewer</title>
+	
+	<script type="text/javascript" src="js/jdataview.js"></script>
+	<script type="text/javascript" src="js/jbinary.js"></script>
+	<script type="text/javascript" src="js/three.min.js"></script>
+	<script type="text/javascript" src="js/OrbitControls.js"></script>
+	<script type="text/javascript" src="js/stats.min.js"></script>
+	<script type="text/javascript" src="js/dat.gui.min.js"></script>
+	<script type="text/javascript" src="js/OBJExporter.js"></script>
+	<script type="text/javascript" src="js/GLTFExporter.js"></script>
+	<script type="text/javascript" src="js/FileSaver.js"></script>
+</head>
+<body>
+	<script type="text/javascript" src="webgl-demo.js"></script>
+	<script type="text/javascript">
+		//main();
+		gModelViewer = true;
+	</script>
+	
+	<div id="ID-LoadSave">
+	<p>
+		<input type="file" style="float:left;clear:none" id="ID-LoadFile" onchange="HandleFiles(this.files)">
+	</p>
+	</div>
+</body>
+</html>
